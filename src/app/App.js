@@ -38,20 +38,32 @@ export class App {
     this.resources.on(EVENTS_ENUM.READY, () => {
       console.log("All resources have been loaded");
     });
+
+    this.debugObject = {
+      goToRoom: async () => {
+        await this.goToRoomWorld();
+      },
+      goToGlobe: async () => {
+        await this.goToGlobeWorld();
+      },
+    };
+    const folder = this.debug.dat.addFolder("scenes");
+    folder.add(this.debugObject, "goToRoom");
+    folder.add(this.debugObject, "goToGlobe");
   }
 
-  goToRoomWorld() {
-    this.camera.runBlurInAnimation();
-    this.roomWorld.destroy();
-    this.globeWorld.initWorld();
-    this.camera.runBlurOutAnimation();
-  }
-
-  goToGlobeWorld() {
-    this.camera.runBlurInAnimation();
+  async goToRoomWorld() {
+    await this.camera.runBlurInAnimation();
     this.globeWorld.destroyWorld();
     this.roomWorld.setScene();
-    this.camera.runBlurOutAnimation();
+    await this.camera.runBlurOutAnimation();
+  }
+
+  async goToGlobeWorld() {
+    await this.camera.runBlurInAnimation();
+    this.roomWorld.destroy();
+    this.globeWorld.initWorld();
+    await this.camera.runBlurOutAnimation();
   }
 
   resize() {

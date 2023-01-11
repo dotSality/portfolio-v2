@@ -13,21 +13,19 @@ export class RoomWorld extends EventEmitter {
   }
 
   setScene() {
-    this.roomScene = this.resources.items[RESOURCES_NAMES_ENUM.ROOM_SCENE];
+    this.roomScene = this.resources.items[RESOURCES_NAMES_ENUM.ROOM_SCENE].scene;
 
-    this.roomScene.scale.set(50, 50, 50);
-    this.roomScene.position.set(0, -50, 0);
+    this.roomScene.scale.set(15, 15, 15);
+    this.roomScene.position.set(0, -15, 0);
 
     this.scene.add(this.roomScene);
   }
 
   destroy() {
-    this.roomScene.material.dispose();
-    this.roomScene.geometry.dispose();
     this.roomScene.traverse((child) => {
       if (child instanceof THREE.Mesh) {
-        child.material.dispose();
         child.geometry.dispose();
+        child.material.dispose();
       }
     });
     this.scene.remove(this.roomScene);

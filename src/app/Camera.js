@@ -70,37 +70,43 @@ export class Camera {
     }
   }
 
-  runBlurInAnimation() {
-    this.isBlurringIn = true;
-    this.canvas.classList.add("blur-in");
-    this.controls.enableRotate = false;
-    this.controls.enablePan = false;
-    this.controls.enableZoom = false;
-    setTimeout(() => {
-      this.canvas.classList.remove("blur-in");
-      this.canvas.classList.add("blurred");
-      this.isBlurringIn = false;
-      this.controls.enableRotate = true;
-      this.controls.enablePan = true;
-      this.controls.enableZoom = true;
-    }, 1950);
+  async runBlurInAnimation() {
+    await new Promise((res) => {
+      this.isBlurringIn = true;
+      this.canvas.classList.add("blur-in");
+      this.controls.enableRotate = false;
+      this.controls.enablePan = false;
+      this.controls.enableZoom = false;
+      setTimeout(() => {
+        this.canvas.classList.remove("blur-in");
+        this.canvas.classList.add("blurred");
+        this.isBlurringIn = false;
+        this.controls.enableRotate = true;
+        this.controls.enablePan = true;
+        this.controls.enableZoom = true;
+        res();
+      }, 1950);
+    });
   }
 
-  runBlurOutAnimation() {
-    this.isBlurringOut = true;
-    this.instance.zoom = 4.52;
-    this.canvas.classList.remove("blurred");
-    this.canvas.classList.add("blur-out");
-    this.controls.enableRotate = false;
-    this.controls.enablePan = false;
-    this.controls.enableZoom = false;
-    setTimeout(() => {
-      this.canvas.classList.remove("blur-out");
-      this.isBlurringOut = false;
-      this.controls.enableRotate = true;
-      this.controls.enablePan = true;
-      this.controls.enableZoom = true;
-    }, 1950);
+  async runBlurOutAnimation() {
+    await new Promise((res) => {
+      this.isBlurringOut = true;
+      this.instance.zoom = 4.52;
+      this.canvas.classList.remove("blurred");
+      this.canvas.classList.add("blur-out");
+      this.controls.enableRotate = false;
+      this.controls.enablePan = false;
+      this.controls.enableZoom = false;
+      setTimeout(() => {
+        this.canvas.classList.remove("blur-out");
+        this.isBlurringOut = false;
+        this.controls.enableRotate = true;
+        this.controls.enablePan = true;
+        this.controls.enableZoom = true;
+        res();
+      }, 1950);
+    });
   }
 
   initDebug() {

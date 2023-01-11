@@ -13,6 +13,8 @@ export class GlobeScene {
     this.app = new App();
     this.scene = this.app.scene;
     this.resources = this.app.resources;
+
+    this.initDebug();
   }
 
   setModel() {
@@ -85,8 +87,6 @@ export class GlobeScene {
     this.globeGroup.scale.set(50, 50, 50);
     this.globeGroup.position.set(0, -50, 0);
     this.scene.add(this.globeGroup);
-
-    this.initDebug();
   }
 
   destroy() {
