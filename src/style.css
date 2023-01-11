@@ -1,0 +1,62 @@
+* {
+    margin: 0;
+    padding: 0;
+}
+
+html,
+body {
+    overflow: hidden;
+    background-color: black;
+}
+
+.webgl {
+    position: fixed;
+    top: 0;
+    left: 0;
+    outline: none;
+}
+
+.webgl.blur-in {
+    opacity: unset;
+    filter: blur(0px);
+    animation: 2s scene-blur-in linear;
+}
+
+.webgl.blurred {
+    opacity: 0;
+    filter: blur(32px);
+}
+
+.webgl.blur-out {
+    opacity: 1;
+    filter: blur(32px);
+    animation: 2s scene-blur-out linear;
+}
+
+@keyframes scene-blur-in {
+    from {
+        opacity: 1;
+        background-color: unset;
+        filter: blur(0px);
+    }
+
+    to {
+        opacity: 0;
+        background-color: black;
+        filter: blur(32px);
+    }
+}
+
+@keyframes scene-blur-out {
+    from {
+        opacity: 0;
+        background-color: unset;
+        filter: blur(32px);
+    }
+
+    to {
+        opacity: 1;
+        background-color: black;
+        filter: blur(0px);
+    }
+}
