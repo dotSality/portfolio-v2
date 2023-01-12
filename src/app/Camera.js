@@ -22,7 +22,7 @@ export class Camera {
     this.setInstance();
     this.setOrbitControls();
 
-    this.initDebug();
+    // this.initDebug();
   }
 
   setInstance() {
@@ -40,15 +40,15 @@ export class Camera {
     this.controls = new OrbitControls(this.instance, this.canvas);
     this.controls.enableDamping = true;
 
-    this.controls.minPolarAngle = Math.PI / 4;
-    this.controls.maxPolarAngle = Math.PI / 4 + Math.PI / 6;
+    // this.controls.minPolarAngle = Math.PI / 4;
+    // this.controls.maxPolarAngle = Math.PI / 4 + Math.PI / 6;
 
-    this.controls.minDistance = 150;
-    this.controls.maxDistance = 300;
-
-    this.controls.zoomSpeed = 0.3;
-    this.controls.rotateSpeed = 0.5;
-    this.controls.enablePan = false;
+    // this.controls.minDistance = 150;
+    // this.controls.maxDistance = 300;
+    //
+    // this.controls.zoomSpeed = 0.3;
+    // this.controls.rotateSpeed = 0.5;
+    // this.controls.enablePan = false;
   }
 
   resize() {
@@ -75,14 +75,12 @@ export class Camera {
       this.isBlurringIn = true;
       this.canvas.classList.add("blur-in");
       this.controls.enableRotate = false;
-      this.controls.enablePan = false;
       this.controls.enableZoom = false;
       setTimeout(() => {
         this.canvas.classList.remove("blur-in");
         this.canvas.classList.add("blurred");
         this.isBlurringIn = false;
         this.controls.enableRotate = true;
-        this.controls.enablePan = true;
         this.controls.enableZoom = true;
         res();
       }, 1950);
@@ -92,42 +90,41 @@ export class Camera {
   async runBlurOutAnimation() {
     await new Promise((res) => {
       this.isBlurringOut = true;
+      this.instance.position.set(140, 85, 140);
       this.instance.zoom = 4.52;
       this.canvas.classList.remove("blurred");
       this.canvas.classList.add("blur-out");
       this.controls.enableRotate = false;
-      this.controls.enablePan = false;
       this.controls.enableZoom = false;
       setTimeout(() => {
         this.canvas.classList.remove("blur-out");
         this.isBlurringOut = false;
         this.controls.enableRotate = true;
-        this.controls.enablePan = true;
         this.controls.enableZoom = true;
         res();
       }, 1950);
     });
   }
 
-  initDebug() {
-    this.debugFolder = this.debug.dat.addFolder("Camera");
-
-    this.debugFolder.add({
-      "Blur in": () => {
-        this.runBlurInAnimation();
-      }
-    }, "Blur in");
-    this.debugFolder.add({
-      "Blur out": () => {
-        this.runBlurOutAnimation();
-      }
-    }, "Blur out");
-    this.debugFolder.add({
-      "Destroy camera": () => {
-        this.destroy();
-      }
-    }, "Destroy camera");
-  }
+  // initDebug() {
+  //   this.debugFolder = this.debug.dat.addFolder("Camera");
+  //
+  //   this.debugFolder.add({
+  //     "Blur in": () => {
+  //       this.runBlurInAnimation();
+  //     }
+  //   }, "Blur in");
+  //   this.debugFolder.add({
+  //     "Blur out": () => {
+  //       this.runBlurOutAnimation();
+  //     }
+  //   }, "Blur out");
+  //   this.debugFolder.add({
+  //     "Destroy camera": () => {
+  //       this.destroy();
+  //     }
+  //   }, "Destroy camera");
+  // }
 
   destroy() {
     this.controls.dispose();

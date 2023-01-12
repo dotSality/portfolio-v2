@@ -33,6 +33,10 @@ body {
     animation: 2s scene-blur-out linear;
 }
 
+.webgl.pointer {
+    cursor: pointer;
+}
+
 @keyframes scene-blur-in {
     from {
         opacity: 1;

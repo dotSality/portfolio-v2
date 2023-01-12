@@ -4,14 +4,11 @@ import { EventEmitter } from "./utils/EventEmitter";
 import { App } from "./App";
 import { EVENTS_ENUM } from "../constants/events";
 import { EffectComposer } from "three/examples/jsm/postprocessing/EffectComposer";
-import { SMAAPass } from "three/examples/jsm/postprocessing/SMAAPass";
 import { RenderPass } from "three/examples/jsm/postprocessing/RenderPass";
 import { ShaderPass } from "three/examples/jsm/postprocessing/ShaderPass";
 import { GammaCorrectionShader } from "three/examples/jsm/shaders/GammaCorrectionShader";
-import { RGBAFormat, sRGBEncoding, WebGLRenderTarget } from "three";
 import { FXAAShader } from "three/examples/jsm/shaders/FXAAShader";
-import { SSAARenderPass } from "three/examples/jsm/postprocessing/SSAARenderPass";
-import { CopyShader } from "three/examples/jsm/shaders/CopyShader";
+import { OutlinePass } from "three/examples/jsm/postprocessing/OutlinePass";
 
 export class Renderer extends EventEmitter {
   constructor() {
@@ -25,12 +22,19 @@ export class Renderer extends EventEmitter {
     this.time = this.app.time;
     this.isInitialized = false;
 
+    this.raycaster = this.app.raycaster;
+    this.outlineObjects = [];
+
     this.setInstance();
 
     this.app.resources.on(EVENTS_ENUM.READY, () => {
       this.setEffectComposer();
-      this.setAntialiasShader();
+      this.setEffectPasses();
       this.isInitialized = true;
+    });
+
+    window.addEventListener("click", () => {
+      this.onCityClickHandler();
     });
   }
 
@@ -54,9 +58,21 @@ export class Renderer extends EventEmitter {
     this.effectComposer.setSize(this.sizes.width, this.sizes.height);
   }
 
-  setAntialiasShader() {
+  setEffectPasses() {
     const renderPath = new RenderPass(this.scene, this.camera.instance);
     this.effectComposer.addPass(renderPath);
+
+    this.outlinePass = new OutlinePass(
+      new THREE.Vector2(this.sizes.width, this.sizes.height),
+      this.scene,
+      this.camera.instance,
+    );
+    this.outlinePass.edgeStrength = 10;
+    this.outlinePass.edgeGlow = 0.5;
+    this.outlinePass.edgeThickness = 2;
+    this.outlinePass.visibleEdgeColor = new THREE.Color(0xffffff);
+    this.outlinePass.hiddenEdgeColor = new THREE.Color(0x190a05);
+    this.effectComposer.addPass(this.outlinePass);
 
     const gammaCorrectionShader = new ShaderPass(GammaCorrectionShader);
     this.effectComposer.addPass(gammaCorrectionShader);
@@ -84,10 +100,30 @@ export class Renderer extends EventEmitter {
     this.fxaaPass.material.uniforms["resolution"].value.y = 1 / (this.sizes.height * pixelRatio);
   }
 
+  checkIntersection() {
+    this.raycaster.update();
+    const intersects = this.raycaster.intersects;
+    const outlineObject = intersects[0]?.object;
+    this.outlineObjects = outlineObject ? [outlineObject] : [];
+    if (outlineObject) {
+      this.canvas.classList.add("pointer");
+    } else {
+      this.canvas.classList.remove("pointer");
+    }
+    this.outlinePass.selectedObjects = this.outlineObjects;
+  }
+
+  async onCityClickHandler() {
+    if (this.outlineObjects.length > 0 && !this.camera.isBlurringIn) {
+      await this.app.goToRoomWorld();
+    }
+  }
+
   update() {
     if (this.isInitialized) {
       // this.instance.render(this.scenes.currentScene, this.camera);
       this.effectComposer.render(this.time.delta);
+      this.checkIntersection();
       this.updateFXAA();
     }
   }

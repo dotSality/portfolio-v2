@@ -8,6 +8,7 @@ import { Debug } from "./utils/Debug";
 import { GlobeWorld } from "./scenes/globe/GlobeWorld";
 import { Camera } from "./Camera";
 import { RoomWorld } from "./scenes/apartment/RoomWorld";
+import { AppRaycaster } from "./Raycaster";
 
 export class App {
   constructor(canvas) {
@@ -23,6 +24,7 @@ export class App {
     this.time = new Time();
     this.scene = new THREE.Scene();
     this.camera = new Camera();
+    this.raycaster = new AppRaycaster();
     this.globeWorld = new GlobeWorld();
     this.roomWorld = new RoomWorld();
     this.renderer = new Renderer();
@@ -75,5 +77,6 @@ export class App {
     this.camera.update();
     this.globeWorld.update();
     this.renderer.update();
+    // this.raycaster.update();
   }
 }

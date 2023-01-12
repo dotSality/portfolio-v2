@@ -14,6 +14,8 @@ export class GlobeScene {
     this.scene = this.app.scene;
     this.resources = this.app.resources;
 
+    this.raycaster = this.app.raycaster;
+
     this.initDebug();
   }
 
@@ -52,16 +54,16 @@ export class GlobeScene {
     this.globeRoads = this.resources.items[RESOURCES_NAMES_ENUM.GLOBE_ROADS].scene;
     // Set baked city texture
     this.globeCity.traverse((child) => {
-      if (child instanceof THREE.Mesh) {
-        child.material = bakedCityMaterial;
-      }
-
-      if (/(grey)/.test(child.name)) {
-        child.material = windowDarkMaterial;
-      }
-
+      console.log(child);
       if (/(white)/.test(child.name)) {
         child.material = windowLightMaterial;
+        child.renderOrder = 1;
+      } else if (/(grey)/.test(child.name)) {
+        child.material = windowDarkMaterial;
+        child.renderOrder = 1;
+      } else if (child instanceof THREE.Mesh) {
+        child.material = bakedCityMaterial;
+        this.raycaster.setRaycasterTarget(child);
       }
     });
     // Set baked roads texture
@@ -90,6 +92,7 @@ export class GlobeScene {
   }
 
   destroy() {
+    this.raycaster.setRaycasterTarget(null);
     this.scene.traverse((child) => {
       if (child instanceof THREE.Mesh) {
         child.geometry.dispose();
