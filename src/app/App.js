@@ -77,6 +77,5 @@ export class App {
     this.camera.update();
     this.globeWorld.update();
     this.renderer.update();
-    // this.raycaster.update();
   }
 }

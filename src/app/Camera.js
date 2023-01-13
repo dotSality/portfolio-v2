@@ -8,9 +8,6 @@ export class Camera {
     this.sizes = this.app.sizes;
     this.scene = this.app.scene;
     this.canvas = this.app.canvas;
-    this.time = this.app.time;
-
-    this.debug = this.app.debug;
 
     this.init();
   }
@@ -21,8 +18,6 @@ export class Camera {
 
     this.setInstance();
     this.setOrbitControls();
-
-    // this.initDebug();
   }
 
   setInstance() {
@@ -40,15 +35,15 @@ export class Camera {
     this.controls = new OrbitControls(this.instance, this.canvas);
     this.controls.enableDamping = true;
 
-    // this.controls.minPolarAngle = Math.PI / 4;
-    // this.controls.maxPolarAngle = Math.PI / 4 + Math.PI / 6;
+    this.controls.minPolarAngle = Math.PI / 4;
+    this.controls.maxPolarAngle = Math.PI / 4 + Math.PI / 6;
 
-    // this.controls.minDistance = 150;
-    // this.controls.maxDistance = 300;
-    //
-    // this.controls.zoomSpeed = 0.3;
-    // this.controls.rotateSpeed = 0.5;
-    // this.controls.enablePan = false;
+    this.controls.minDistance = 120;
+    this.controls.maxDistance = 300;
+
+    this.controls.zoomSpeed = 0.3;
+    this.controls.rotateSpeed = 0.5;
+    this.controls.enablePan = false;
   }
 
   resize() {
@@ -58,12 +53,14 @@ export class Camera {
 
   update() {
     if (this.controls) {
+      const oldPosition = this.instance.position.clone();
       if (this.isBlurringIn) {
-        this.instance.zoom += (1 / this.time.delta) / 2;
-        console.log(this.instance.zoom);
+        const newPosition = oldPosition.multiplyScalar(0.994);
+        this.instance.position.copy(newPosition);
       }
       if (this.isBlurringOut) {
-        this.instance.zoom -= (1 / this.time.delta) / 2;
+        const newPosition = oldPosition.multiplyScalar(1.006);
+        this.instance.position.copy(newPosition);
       }
       this.controls.update();
       this.instance.updateProjectionMatrix();
@@ -90,8 +87,6 @@ export class Camera {
   async runBlurOutAnimation() {
     await new Promise((res) => {
       this.isBlurringOut = true;
-      this.instance.position.set(140, 85, 140);
-      this.instance.zoom = 4.52;
       this.canvas.classList.remove("blurred");
       this.canvas.classList.add("blur-out");
       this.controls.enableRotate = false;
@@ -105,26 +100,6 @@ export class Camera {
       }, 1950);
     });
   }
-
-  // initDebug() {
-  //   this.debugFolder = this.debug.dat.addFolder("Camera");
-  //
-  //   this.debugFolder.add({
-  //     "Blur in": () => {
-  //       this.runBlurInAnimation();
-  //     }
-  //   }, "Blur in");
-  //   this.debugFolder.add({
-  //     "Blur out": () => {
-  //       this.runBlurOutAnimation();
-  //     }
-  //   }, "Blur out");
-  //   this.debugFolder.add({
-  //     "Destroy camera": () => {
-  //       this.destroy();
-  //     }
-  //   }, "Destroy camera");
-  // }
 
   destroy() {
     this.controls.dispose();

@@ -54,7 +54,6 @@ export class GlobeScene {
     this.globeRoads = this.resources.items[RESOURCES_NAMES_ENUM.GLOBE_ROADS].scene;
     // Set baked city texture
     this.globeCity.traverse((child) => {
-      console.log(child);
       if (/(white)/.test(child.name)) {
         child.material = windowLightMaterial;
         child.renderOrder = 1;

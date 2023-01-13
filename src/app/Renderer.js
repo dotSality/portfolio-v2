@@ -115,13 +115,16 @@ export class Renderer extends EventEmitter {
 
   async onCityClickHandler() {
     if (this.outlineObjects.length > 0 && !this.camera.isBlurringIn) {
-      await this.app.goToRoomWorld();
+      if (this.outlineObjects[0].name === "mergecity") {
+        await this.app.goToRoomWorld();
+      } else {
+        await this.app.goToGlobeWorld();
+      }
     }
   }
 
   update() {
     if (this.isInitialized) {
-      // this.instance.render(this.scenes.currentScene, this.camera);
       this.effectComposer.render(this.time.delta);
       this.checkIntersection();
       this.updateFXAA();
