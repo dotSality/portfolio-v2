@@ -62,7 +62,7 @@ export class GlobeScene {
         child.renderOrder = 1;
       } else if (child instanceof THREE.Mesh) {
         child.material = bakedCityMaterial;
-        this.raycaster.setRaycasterTarget(child);
+        this.raycaster.setRaycasterTargets([child]);
       }
     });
     // Set baked roads texture
@@ -85,13 +85,12 @@ export class GlobeScene {
     // Globe group
     this.globeGroup = new THREE.Group();
     this.globeGroup.add(this.globeCity, this.globeRoads);
-    this.globeGroup.scale.set(50, 50, 50);
-    this.globeGroup.position.set(0, -50, 0);
+    this.globeGroup.scale.set(25, 25, 25);
+    this.globeGroup.position.set(0, -25, 0);
     this.scene.add(this.globeGroup);
   }
 
   destroy() {
-    this.raycaster.setRaycasterTarget(null);
     this.scene.traverse((child) => {
       if (child instanceof THREE.Mesh) {
         child.geometry.dispose();

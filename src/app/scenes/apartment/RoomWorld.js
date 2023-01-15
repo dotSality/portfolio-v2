@@ -17,34 +17,44 @@ export class RoomWorld extends EventEmitter {
   setScene() {
     this.roomScene = this.resources.items[RESOURCES_NAMES_ENUM.ROOM_SCENE].scene;
 
-    this.roomScene.scale.set(20, 20, 20);
+    this.roomScene.scale.set(10, 10, 10);
     this.roomScene.position.set(0, -20, 0);
 
-    this.ambientLight = new THREE.AmbientLight(0xf5c084, 1);
-    this.scene.add(this.ambientLight);
-
-    this.pointLight = new THREE.PointLight(0xf5c084, 10, 200, 0);
-    this.pointLight.position.set(0, 35, 0);
-    this.scene.add(this.pointLight);
-    // this.app.debug.dat.addColor(this.pointLight, "color")
-    //   .name('room color');
-    // this.app.debug.dat.addColor(this.ambientLight, "color")
-    //   .name('ambient color');
-
-    const lightHelper = new THREE.PointLightHelper(this.pointLight);
-    this.scene.add(lightHelper);
-
+    const targets = [];
     this.roomScene.traverse((child) => {
-      if (child.name === "exitsign") {
-        this.raycaster.setRaycasterTarget(child);
+      if (child.name === "exitsign" || child.name === "Cube045_1") {
+        targets.push(child);
       }
     });
+    this.raycaster.setRaycasterTargets(targets);
 
     this.scene.add(this.roomScene);
   }
 
-  destroy() {
-    this.raycaster.setRaycasterTarget(null);
+  setLights() {
+    this.ambientLight = new THREE.AmbientLight(0xfff5b6, 1);
+    this.scene.add(this.ambientLight);
+
+    this.pointLight = new THREE.PointLight(0xfff5b6, 4, 100, 0);
+    this.pointLight.position.set(0, 35, 0);
+    this.scene.add(this.pointLight);
+
+    // this.app.debug.dat.addColor(this.pointLight, "color")
+    //     .name('room color');
+    // this.app.debug.dat.add(this.pointLight, "intensity")
+    //     .min(0)
+    //     .max(10)
+    //     .name('point light intensity');
+    // this.app.debug.dat.addColor(this.ambientLight, "color")
+    //     .name('ambient color');
+  }
+
+  initWorld() {
+    this.setScene();
+    this.setLights();
+  }
+
+  destroyWorld() {
     this.ambientLight.dispose();
     this.scene.remove(this.ambientLight);
     this.pointLight.dispose();

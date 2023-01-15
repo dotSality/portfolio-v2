@@ -9,4 +9,5 @@ export const EVENTS_ENUM = {
   DESTROY_WORLD: "destroy-world",
   INIT_WORLD: "init-world",
   SET_WORLD: "set-world",
+  CLICK: "click",
 };

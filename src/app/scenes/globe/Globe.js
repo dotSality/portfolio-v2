@@ -13,7 +13,7 @@ export class Globe {
     this.debug = this.app.debug;
     this.scene = this.app.scene;
 
-    this.radius = 50;
+    this.radius = 25;
   }
 
   setGeometry() {

@@ -9,6 +9,8 @@ export class Camera {
     this.scene = this.app.scene;
     this.canvas = this.app.canvas;
 
+    this.previousPosition = null;
+
     this.init();
   }
 
@@ -25,9 +27,9 @@ export class Camera {
       35,
       this.sizes.width / this.sizes.height,
       0.1,
-      400,
+      200,
     );
-    this.instance.position.set(140, 85, 140);
+    this.instance.position.set(70, 42.5, 70);
     this.scene.add(this.instance);
   }
 
@@ -38,8 +40,8 @@ export class Camera {
     this.controls.minPolarAngle = Math.PI / 4;
     this.controls.maxPolarAngle = Math.PI / 4 + Math.PI / 6;
 
-    this.controls.minDistance = 120;
-    this.controls.maxDistance = 300;
+    this.controls.minDistance = 60;
+    this.controls.maxDistance = 150;
 
     this.controls.zoomSpeed = 0.3;
     this.controls.rotateSpeed = 0.5;
@@ -99,6 +101,34 @@ export class Camera {
         res();
       }, 1950);
     });
+  }
+
+  setPrevCameraCoords(posVec) {
+    this.previousPosition = posVec;
+  }
+
+  moveControlsTo(posVec, lookVec) {
+    this.controls.maxPolarAngle = Math.PI;
+    this.controls.minDistance = 0;
+    this.controls.dampingFactor = 0;
+    this.controls.enableRotate = false;
+    this.controls.enableZoom = false;
+    this.instance.position.copy(posVec);
+    this.controls.target.copy(lookVec);
+  }
+
+  resetControls() {
+    this.instance.position.reset();
+    this.controls.target.set(0, 0, 0);
+    this.controls.maxPolarAngle = Math.PI / 4 + Math.PI / 6;
+    this.controls.enableRotate = true;
+    this.controls.enableZoom = true;
+    this.controls.dampingFactor = 0.05;
+    this.controls.rotateSpeed = 0.5;
+    this.controls.minDistance = 60;
+    this.controls.maxDistance = 150;
+    this.instance.position.copy(this.previousPosition);
+    this.setPrevCameraCoords(null);
   }
 
   destroy() {

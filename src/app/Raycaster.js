@@ -1,7 +1,6 @@
 import * as THREE from "three";
 import { EventEmitter } from "./utils/EventEmitter";
 import { App } from "./App";
-import { Cursor } from "./utils/Cursor";
 
 export class AppRaycaster extends EventEmitter {
   constructor() {
@@ -9,13 +8,13 @@ export class AppRaycaster extends EventEmitter {
 
     this.app = new App();
     this.instance = new THREE.Raycaster();
-    this.cursor = new Cursor();
+    this.cursor = this.app.cursor;
     this.sizes = this.app.sizes;
     this.mouse = this.cursor.mouse;
     this.coords = null;
     this.camera = this.app.camera.instance;
 
-    this.raycasterTarget = null;
+    this.raycasterTargets = null;
     this.intersects = null;
 
     this.setCoords();
@@ -27,8 +26,8 @@ export class AppRaycaster extends EventEmitter {
     this.coords = { x, y };
   }
 
-  setRaycasterTarget(target) {
-    this.raycasterTarget = target;
+  setRaycasterTargets(targets) {
+    this.raycasterTargets = targets;
   }
 
   update() {
@@ -36,8 +35,8 @@ export class AppRaycaster extends EventEmitter {
     const y = 1 - this.mouse.y / this.sizes.height * 2;
     this.coords = { x, y };
     this.instance.setFromCamera(this.coords, this.camera);
-    if (this.raycasterTarget) {
-      this.intersects = this.instance.intersectObject(this.raycasterTarget);
+    if (this.raycasterTargets) {
+      this.intersects = this.instance.intersectObjects(this.raycasterTargets);
     } else {
       this.intersects = [];
     }

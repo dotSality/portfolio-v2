@@ -29,9 +29,9 @@ export class Snow extends EventEmitter {
   }
 
   getVelocities() {
-    const velocityX = getSign() * (Math.random() * 0.4 + 0.4);
-    const velocityY = (Math.random() * 0.4 + 0.4);
-    const velocityZ = getSign() * (Math.random() * 0.4 + 0.4);
+    const velocityX = getSign() * (Math.random() * 0.2 + 0.2);
+    const velocityY = (Math.random() * 0.2 + 0.2);
+    const velocityZ = getSign() * (Math.random() * 0.2 + 0.2);
     return [velocityX, velocityY, velocityZ];
   }
 
@@ -74,7 +74,7 @@ export class Snow extends EventEmitter {
 
   setMaterial() {
     this.material = new THREE.PointsMaterial({
-      size: 4,
+      size: 2,
       sizeAttenuation: true,
       depthWrite: false,
       alphaMap: this.resources.items[TEXTURES_NAMES_ENUM.PARTICLE_TEXTURE],

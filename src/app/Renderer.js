@@ -16,6 +16,7 @@ export class Renderer extends EventEmitter {
 
     this.app = new App();
     this.canvas = this.app.canvas;
+    this.cursor = this.app.cursor;
     this.sizes = this.app.sizes;
     this.scene = this.app.scene;
     this.camera = this.app.camera;
@@ -33,7 +34,7 @@ export class Renderer extends EventEmitter {
       this.isInitialized = true;
     });
 
-    window.addEventListener("click", () => {
+    this.cursor.on(EVENTS_ENUM.CLICK, () => {
       this.onCityClickHandler();
     });
   }
@@ -115,10 +116,23 @@ export class Renderer extends EventEmitter {
 
   async onCityClickHandler() {
     if (this.outlineObjects.length > 0 && !this.camera.isBlurringIn) {
-      if (this.outlineObjects[0].name === "mergecity") {
+      const outlinedObject = this.outlineObjects[0];
+      if (outlinedObject.name === "mergecity") {
         await this.app.goToRoomWorld();
-      } else {
+      } else if (outlinedObject.name === "exitsign") {
         await this.app.goToGlobeWorld();
+      } else {
+        const prevPosition = this.camera.instance.position.clone();
+        const lookVec = new THREE.Vector3();
+        lookVec.setFromMatrixPosition(outlinedObject.matrixWorld);
+        const posVec = lookVec.clone();
+        posVec.z += 40;
+
+        this.camera.controls.rotateSpeed = 0;
+
+        this.camera.controls.enableRotate = false;
+        this.camera.moveControlsTo(posVec, lookVec);
+        this.camera.setPrevCameraCoords(prevPosition);
       }
     }
   }

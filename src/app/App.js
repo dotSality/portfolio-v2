@@ -9,6 +9,7 @@ import { GlobeWorld } from "./scenes/globe/GlobeWorld";
 import { Camera } from "./Camera";
 import { RoomWorld } from "./scenes/apartment/RoomWorld";
 import { AppRaycaster } from "./Raycaster";
+import { Cursor } from "./utils/Cursor";
 
 export class App {
   constructor(canvas) {
@@ -21,6 +22,7 @@ export class App {
     this.resources = new Resources();
     this.debug = new Debug();
     this.sizes = new Sizes();
+    this.cursor = new Cursor();
     this.time = new Time();
     this.scene = new THREE.Scene();
     this.camera = new Camera();
@@ -55,15 +57,17 @@ export class App {
   }
 
   async goToRoomWorld() {
+    this.raycaster.setRaycasterTargets(null);
     await this.camera.runBlurInAnimation();
     this.globeWorld.destroyWorld();
-    this.roomWorld.setScene();
+    this.roomWorld.initWorld();
     await this.camera.runBlurOutAnimation();
   }
 
   async goToGlobeWorld() {
+    this.raycaster.setRaycasterTargets(null);
     await this.camera.runBlurInAnimation();
-    this.roomWorld.destroy();
+    this.roomWorld.destroyWorld();
     this.globeWorld.initWorld();
     await this.camera.runBlurOutAnimation();
   }
