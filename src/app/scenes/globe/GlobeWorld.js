@@ -20,7 +20,7 @@ export class GlobeWorld {
 
   initWorld() {
     this.globe.init();
-    this.globeScene.setModel();
+    this.globeScene.init();
     this.snow.init();
   }
 

@@ -10,4 +10,8 @@ export const EVENTS_ENUM = {
   INIT_WORLD: "init-world",
   SET_WORLD: "set-world",
   CLICK: "click",
+  LOADING_STATUS: "loading-status",
+  FADING_FINISHED: "fading-finished",
+  FADE_TO_ROOM: "fade-to-room",
+  FADE_TO_CITY: "fade-to-city",
 };

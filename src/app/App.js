@@ -10,6 +10,7 @@ import { Camera } from "./Camera";
 import { RoomWorld } from "./scenes/apartment/RoomWorld";
 import { AppRaycaster } from "./Raycaster";
 import { Cursor } from "./utils/Cursor";
+import { LoadingBar } from "./LoadingBar";
 
 export class App {
   constructor(canvas) {
@@ -27,6 +28,7 @@ export class App {
     this.scene = new THREE.Scene();
     this.camera = new Camera();
     this.raycaster = new AppRaycaster();
+    this._loadingBar = new LoadingBar();
     this.globeWorld = new GlobeWorld();
     this.roomWorld = new RoomWorld();
     this.renderer = new Renderer();
@@ -62,6 +64,7 @@ export class App {
     this.globeWorld.destroyWorld();
     this.roomWorld.initWorld();
     await this.camera.runBlurOutAnimation();
+    this.camera.trigger(EVENTS_ENUM.FADE_TO_ROOM);
   }
 
   async goToGlobeWorld() {
@@ -70,6 +73,7 @@ export class App {
     this.roomWorld.destroyWorld();
     this.globeWorld.initWorld();
     await this.camera.runBlurOutAnimation();
+    this.camera.trigger(EVENTS_ENUM.FADE_TO_CITY);
   }
 
   resize() {
@@ -79,6 +83,7 @@ export class App {
 
   update() {
     this.camera.update();
+    this._loadingBar.update();
     this.globeWorld.update();
     this.renderer.update();
   }

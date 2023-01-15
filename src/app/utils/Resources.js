@@ -10,7 +10,6 @@ export class Resources extends EventEmitter {
   constructor() {
     super();
     this.sources = sources;
-
     this.items = {};
     this.toLoad = this.sources.length;
     this.loaded = 0;
@@ -20,10 +19,16 @@ export class Resources extends EventEmitter {
   }
 
   setLoaders() {
+    const loadingManager = new THREE.LoadingManager(
+      undefined,
+      (_, loaded, total) => {
+        this.trigger(EVENTS_ENUM.LOADING_STATUS, ([loaded / total]));
+      }
+    );
     this.loaders = {};
     Object.defineProperty(this.loaders, "gltfLoader", {
       value: (function () {
-        const gltfLoader = new GLTFLoader();
+        const gltfLoader = new GLTFLoader(loadingManager);
         const dracoLoader = new DRACOLoader();
         dracoLoader.setDecoderPath("/draco/");
         gltfLoader.setDRACOLoader(dracoLoader);
@@ -32,11 +37,11 @@ export class Resources extends EventEmitter {
       writable: false,
     });
     Object.defineProperty(this.loaders, "textureLoader", {
-      value: new THREE.TextureLoader(),
+      value: new THREE.TextureLoader(loadingManager),
       writable: false,
     });
     Object.defineProperty(this.loaders, "hdrTextureLoader", {
-      value: new RGBELoader(),
+      value: new RGBELoader(loadingManager),
       writable: false,
     });
   }

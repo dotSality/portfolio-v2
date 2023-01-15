@@ -2,6 +2,7 @@ import * as THREE from "three";
 import { EventEmitter } from "../../utils/EventEmitter";
 import { App } from "../../App";
 import { RESOURCES_NAMES_ENUM } from "../../../constants/modelNames";
+import { EVENTS_ENUM } from "../../../constants/events";
 
 export class RoomWorld extends EventEmitter {
   constructor() {
@@ -10,8 +11,13 @@ export class RoomWorld extends EventEmitter {
     this.app = new App();
     this.resources = this.app.resources;
     this.scene = this.app.scene;
+    this._camera = this.app.camera;
 
     this.raycaster = this.app.raycaster;
+
+    this._camera.on(EVENTS_ENUM.FADE_TO_ROOM, () => {
+      this.raycaster.setRaycasterTargets(this._raycastingTargets);
+    });
   }
 
   setScene() {
@@ -26,7 +32,7 @@ export class RoomWorld extends EventEmitter {
         targets.push(child);
       }
     });
-    this.raycaster.setRaycasterTargets(targets);
+    this._raycastingTargets = targets;
 
     this.scene.add(this.roomScene);
   }

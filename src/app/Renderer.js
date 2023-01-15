@@ -21,18 +21,16 @@ export class Renderer extends EventEmitter {
     this.scene = this.app.scene;
     this.camera = this.app.camera;
     this.time = this.app.time;
-    this.isInitialized = false;
 
     this.raycaster = this.app.raycaster;
     this.outlineObjects = [];
 
     this.setInstance();
 
-    this.app.resources.on(EVENTS_ENUM.READY, () => {
-      this.setEffectComposer();
-      this.setEffectPasses();
-      this.isInitialized = true;
-    });
+    // this.app.resources.on(EVENTS_ENUM.READY, () => {
+    this.setEffectComposer();
+    this.setEffectPasses();
+    // });
 
     this.cursor.on(EVENTS_ENUM.CLICK, () => {
       this.onCityClickHandler();
@@ -138,10 +136,10 @@ export class Renderer extends EventEmitter {
   }
 
   update() {
-    if (this.isInitialized) {
-      this.effectComposer.render(this.time.delta);
-      this.checkIntersection();
-      this.updateFXAA();
-    }
+    // if (this.isInitialized) {
+    this.effectComposer.render(this.time.delta);
+    this.checkIntersection();
+    this.updateFXAA();
+    // }
   }
 }

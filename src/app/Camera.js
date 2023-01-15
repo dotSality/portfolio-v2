@@ -1,9 +1,11 @@
 import { App } from "./App";
 import * as THREE from "three";
 import { OrbitControls } from "three/examples/jsm/controls/OrbitControls";
+import { EventEmitter } from "./utils/EventEmitter";
 
-export class Camera {
+export class Camera extends EventEmitter {
   constructor() {
+    super();
     this.app = new App();
     this.sizes = this.app.sizes;
     this.scene = this.app.scene;
