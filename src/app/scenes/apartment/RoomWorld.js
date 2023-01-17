@@ -3,6 +3,8 @@ import { EventEmitter } from "../../utils/EventEmitter";
 import { App } from "../../App";
 import { RESOURCES_NAMES_ENUM } from "../../../constants/modelNames";
 import { EVENTS_ENUM } from "../../../constants/events";
+import brokenTvFragment from "../../../shaders/broken-tv/brokenTvFragment.glsl";
+import brokenTvShader from "../../../shaders/broken-tv/brokenTvVertex.glsl";
 
 export class RoomWorld extends EventEmitter {
   constructor() {
@@ -12,24 +14,41 @@ export class RoomWorld extends EventEmitter {
     this.resources = this.app.resources;
     this.scene = this.app.scene;
     this._camera = this.app.camera;
+    this._time = this.app.time;
 
-    this.raycaster = this.app.raycaster;
+    this._prevTvMaterial = null;
+
+    this._raycaster = this.app.raycaster;
+
+    this._brokenTvMaterial = new THREE.ShaderMaterial({
+      fragmentShader: brokenTvFragment,
+      vertexShader: brokenTvShader,
+      side: THREE.DoubleSide,
+      uniforms: {
+        uTime: { value: this._time.elapsedTime },
+      },
+    });
 
     this._camera.on(EVENTS_ENUM.FADE_TO_ROOM, () => {
-      this.raycaster.setRaycasterTargets(this._raycastingTargets);
+      this._raycaster.setRaycasterTargets(this._raycastingTargets);
     });
   }
 
-  setScene() {
+  _setScene() {
     this.roomScene = this.resources.items[RESOURCES_NAMES_ENUM.ROOM_SCENE].scene;
 
     this.roomScene.scale.set(10, 10, 10);
     this.roomScene.position.set(0, -20, 0);
 
     const targets = [];
+
     this.roomScene.traverse((child) => {
       if (child.name === "exitsign" || child.name === "Cube045_1") {
         targets.push(child);
+
+        if (child.name === "Cube045_1") {
+          child.material= this._brokenTvMaterial;
+        }
       }
     });
     this._raycastingTargets = targets;
@@ -37,7 +56,7 @@ export class RoomWorld extends EventEmitter {
     this.scene.add(this.roomScene);
   }
 
-  setLights() {
+  _setLights() {
     this.ambientLight = new THREE.AmbientLight(0xfff5b6, 1);
     this.scene.add(this.ambientLight);
 
@@ -55,9 +74,13 @@ export class RoomWorld extends EventEmitter {
     //     .name('ambient color');
   }
 
+  update() {
+    this._brokenTvMaterial.uniforms.uTime.value = this._time.elapsedTime;
+  }
+
   initWorld() {
-    this.setScene();
-    this.setLights();
+    this._setScene();
+    this._setLights();
   }
 
   destroyWorld() {

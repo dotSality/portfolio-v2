@@ -11,9 +11,12 @@ import { RoomWorld } from "./scenes/apartment/RoomWorld";
 import { AppRaycaster } from "./Raycaster";
 import { Cursor } from "./utils/Cursor";
 import { LoadingBar } from "./LoadingBar";
+import { LoadingMessage } from "./LoadingMessage";
+import { EventEmitter } from "./utils/EventEmitter";
 
-export class App {
+export class App extends EventEmitter {
   constructor(canvas) {
+    super();
     if (App.instance) {
       return App.instance;
     }
@@ -28,7 +31,8 @@ export class App {
     this.scene = new THREE.Scene();
     this.camera = new Camera();
     this.raycaster = new AppRaycaster();
-    this._loadingBar = new LoadingBar();
+    this.loadingBar = new LoadingBar();
+    this.loadingMessage = new LoadingMessage();
     this.globeWorld = new GlobeWorld();
     this.roomWorld = new RoomWorld();
     this.renderer = new Renderer();
@@ -43,6 +47,10 @@ export class App {
 
     this.resources.on(EVENTS_ENUM.READY, () => {
       console.log("All resources have been loaded");
+    });
+
+    this.loadingMessage.on(EVENTS_ENUM.READY_CLICK, () => {
+      this.trigger(EVENTS_ENUM.APP_START);
     });
 
     this.debugObject = {
@@ -83,8 +91,9 @@ export class App {
 
   update() {
     this.camera.update();
-    this._loadingBar.update();
+    this.loadingBar.update();
     this.globeWorld.update();
+    this.roomWorld.update();
     this.renderer.update();
   }
 }

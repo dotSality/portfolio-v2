@@ -14,4 +14,6 @@ export const EVENTS_ENUM = {
   FADING_FINISHED: "fading-finished",
   FADE_TO_ROOM: "fade-to-room",
   FADE_TO_CITY: "fade-to-city",
+  READY_CLICK: "ready-click",
+  APP_START: "app-start",
 };

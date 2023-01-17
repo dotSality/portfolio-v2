@@ -10,9 +10,7 @@ export class LoadingBar extends EventEmitter {
     super();
     this._app = new App();
     this._scene = this._app.scene;
-    this._cursor = this._app.cursor;
     this._resources = this._app.resources;
-    this._time = this._app.time;
 
     this._fadingOutSpeed = 0.02;
     this._progress = 0;
@@ -20,7 +18,7 @@ export class LoadingBar extends EventEmitter {
     this._isFading = false;
     this._setOverlayMesh();
 
-    this._resources.on(EVENTS_ENUM.READY, () => {
+    this._app.on(EVENTS_ENUM.APP_START, () => {
       this._isFading = true;
     });
 
@@ -41,6 +39,7 @@ export class LoadingBar extends EventEmitter {
       uniforms: {
         uAlpha: { value: 1 },
         uProgress: { value: this._progress },
+        uBarOpacity: { value: 1 },
       }
     });
   }
@@ -67,6 +66,8 @@ export class LoadingBar extends EventEmitter {
       if (this._progress === 1) {
         this._isLoading = false;
       }
+    } else {
+      this._overlayMaterial.uniforms.uBarOpacity.value -= 2 * this._fadingOutSpeed;
     }
     if (this._isFading) {
       this._overlayMaterial.uniforms.uAlpha.value -= this._fadingOutSpeed;

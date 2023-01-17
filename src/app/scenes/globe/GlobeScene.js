@@ -15,7 +15,7 @@ export class GlobeScene {
     this.scene = this.app.scene;
     this.resources = this.app.resources;
     this._camera = this.app.camera;
-    this._loadingBar = this.app._loadingBar;
+    this._loadingBar = this.app.loadingBar;
     this._raycaster = this.app.raycaster;
 
     this._loadingBar.on(EVENTS_ENUM.FADING_FINISHED, () => {
@@ -23,8 +23,6 @@ export class GlobeScene {
     });
 
     this._camera.on(EVENTS_ENUM.FADE_TO_CITY, () => {
-      console.log('ff');
-      console.log(this._raycasterTarget);
       this._raycaster.setRaycasterTargets([this._raycasterTarget]);
     });
   }

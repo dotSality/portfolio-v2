@@ -40,6 +40,10 @@ export class Resources extends EventEmitter {
       value: new THREE.TextureLoader(loadingManager),
       writable: false,
     });
+    Object.defineProperty(this.loaders, "cubeTextureLoader", {
+      value: new THREE.CubeTextureLoader(loadingManager),
+      writable: false,
+    });
     Object.defineProperty(this.loaders, "hdrTextureLoader", {
       value: new RGBELoader(loadingManager),
       writable: false,

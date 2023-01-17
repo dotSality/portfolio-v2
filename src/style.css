@@ -1,3 +1,8 @@
+@font-face {
+    src: url("/src/assets/fonts/VT323-Regular.ttf");
+    font-family: 'custom';
+}
+
 * {
     margin: 0;
     padding: 0;
@@ -7,6 +12,7 @@ html,
 body {
     overflow: hidden;
     background-color: black;
+    font-family: 'custom', sans-serif;
 }
 
 .webgl {
@@ -63,4 +69,32 @@ body {
         background-color: black;
         filter: blur(0px);
     }
+}
+
+.hello-message {
+    position: absolute;
+    top: 45%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    z-index: -1;
+    font-size: 72px;
+    color: #ffffff;
+    opacity: 0;
+    cursor: default;
+    user-select: none;
+    transition: opacity 1s ease-in;
+}
+
+.hello-message.fade-in {
+    opacity: 1;
+    z-index: 2;
+}
+
+.hello-message.fade-out {
+    opacity: 0;
+}
+
+.hello-message_clickable:hover {
+    user-select: none;
+    cursor: pointer;
 }

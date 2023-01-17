@@ -21,6 +21,7 @@ export class Renderer extends EventEmitter {
     this.scene = this.app.scene;
     this.camera = this.app.camera;
     this.time = this.app.time;
+    this._roomWorld = this.app.roomWorld;
 
     this.raycaster = this.app.raycaster;
     this.outlineObjects = [];
@@ -129,17 +130,15 @@ export class Renderer extends EventEmitter {
         this.camera.controls.rotateSpeed = 0;
 
         this.camera.controls.enableRotate = false;
-        this.camera.moveControlsTo(posVec, lookVec);
         this.camera.setPrevCameraCoords(prevPosition);
+        this.camera.moveControlsTo(posVec, lookVec);
       }
     }
   }
 
   update() {
-    // if (this.isInitialized) {
     this.effectComposer.render(this.time.delta);
     this.checkIntersection();
     this.updateFXAA();
-    // }
   }
 }
