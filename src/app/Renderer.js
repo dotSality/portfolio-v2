@@ -114,24 +114,34 @@ export class Renderer extends EventEmitter {
   }
 
   async onCityClickHandler() {
+    // REFACTOR THIS CLICK HANDLE LOGIC
     if (this.outlineObjects.length > 0 && !this.camera.isBlurringIn) {
       const outlinedObject = this.outlineObjects[0];
       if (outlinedObject.name === "mergecity") {
         await this.app.goToRoomWorld();
       } else if (outlinedObject.name === "exitsign") {
         await this.app.goToGlobeWorld();
-      } else {
+      } else if (outlinedObject.name === "Cube045_1") {
         const prevPosition = this.camera.instance.position.clone();
         const lookVec = new THREE.Vector3();
         lookVec.setFromMatrixPosition(outlinedObject.matrixWorld);
         const posVec = lookVec.clone();
-        posVec.z += 40;
+        posVec.z += 20;
 
         this.camera.controls.rotateSpeed = 0;
 
         this.camera.controls.enableRotate = false;
         this.camera.setPrevCameraCoords(prevPosition);
         this.camera.moveControlsTo(posVec, lookVec);
+        this.raycaster.setRaycasterTargets(null);
+        this._roomWorld.setMenuMesh();
+      } else if (outlinedObject.name === "backButtonMesh") {
+        console.log("OFF CLICK");
+      } else {
+        const page = outlinedObject.name;
+        if (this._roomWorld._menu) {
+          this._roomWorld._menu.trigger(page, [page]);
+        }
       }
     }
   }

@@ -30,6 +30,18 @@ export class AppRaycaster extends EventEmitter {
     this.raycasterTargets = targets;
   }
 
+  updateRaycasterTargets(_arg) {
+    if (Array.isArray(_arg)) {
+      this.raycasterTargets = [...this.raycasterTargets, ..._arg];
+    } else {
+      if (!this.raycasterTargets?.length) {
+        this.raycasterTargets = [_arg];
+      } else {
+        this.raycasterTargets.push(_arg);
+      }
+    }
+  }
+
   update() {
     const x = this.mouse.x / this.sizes.width * 2 - 1;
     const y = 1 - this.mouse.y / this.sizes.height * 2;

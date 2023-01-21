@@ -3,8 +3,7 @@ import { EventEmitter } from "../../utils/EventEmitter";
 import { App } from "../../App";
 import { RESOURCES_NAMES_ENUM } from "../../../constants/modelNames";
 import { EVENTS_ENUM } from "../../../constants/events";
-import brokenTvFragment from "../../../shaders/broken-tv/brokenTvFragment.glsl";
-import brokenTvShader from "../../../shaders/broken-tv/brokenTvVertex.glsl";
+import { TvMenu } from "./TvMenu";
 
 export class RoomWorld extends EventEmitter {
   constructor() {
@@ -19,15 +18,6 @@ export class RoomWorld extends EventEmitter {
     this._prevTvMaterial = null;
 
     this._raycaster = this.app.raycaster;
-
-    this._brokenTvMaterial = new THREE.ShaderMaterial({
-      fragmentShader: brokenTvFragment,
-      vertexShader: brokenTvShader,
-      side: THREE.DoubleSide,
-      uniforms: {
-        uTime: { value: this._time.elapsedTime },
-      },
-    });
 
     this._camera.on(EVENTS_ENUM.FADE_TO_ROOM, () => {
       this._raycaster.setRaycasterTargets(this._raycastingTargets);
@@ -45,10 +35,6 @@ export class RoomWorld extends EventEmitter {
     this.roomScene.traverse((child) => {
       if (child.name === "exitsign" || child.name === "Cube045_1") {
         targets.push(child);
-
-        if (child.name === "Cube045_1") {
-          child.material= this._brokenTvMaterial;
-        }
       }
     });
     this._raycastingTargets = targets;
@@ -57,25 +43,43 @@ export class RoomWorld extends EventEmitter {
   }
 
   _setLights() {
-    this.ambientLight = new THREE.AmbientLight(0xfff5b6, 1);
+    this.ambientLight = new THREE.AmbientLight(0xffffff, 1);
     this.scene.add(this.ambientLight);
 
-    this.pointLight = new THREE.PointLight(0xfff5b6, 4, 100, 0);
+    this.pointLight = new THREE.PointLight(0xffffff, 3.61, 100, 0);
     this.pointLight.position.set(0, 35, 0);
     this.scene.add(this.pointLight);
 
-    // this.app.debug.dat.addColor(this.pointLight, "color")
-    //     .name('room color');
-    // this.app.debug.dat.add(this.pointLight, "intensity")
-    //     .min(0)
-    //     .max(10)
-    //     .name('point light intensity');
-    // this.app.debug.dat.addColor(this.ambientLight, "color")
-    //     .name('ambient color');
+    this.app.debug.dat.addColor(this.pointLight, "color")
+        .name('room color');
+    this.app.debug.dat.add(this.pointLight, "intensity")
+        .min(0)
+        .max(10)
+        .name('point light intensity');
+    this.app.debug.dat.addColor(this.ambientLight, "color")
+        .name('ambient color');
   }
 
   update() {
-    this._brokenTvMaterial.uniforms.uTime.value = this._time.elapsedTime;
+    if (this._menu) {
+      this._menu.update();
+    }
+  }
+
+  setMenuMesh() {
+    this.roomScene.traverse((child) => {
+      if (child.name === "Cube045_1") {
+        const positionVector = new THREE.Vector3();
+        const tvPosition = child.getWorldPosition(positionVector);
+        const box = child.geometry.boundingBox;
+        const sizes = new THREE.Vector2(
+          box.max.x - box.min.x,
+          box.max.y - box.min.y
+        );
+        this._menu = new TvMenu(sizes.x, sizes.y, tvPosition);
+        this._menu.init();
+      }
+    });
   }
 
   initWorld() {

@@ -98,3 +98,27 @@ body {
     user-select: none;
     cursor: pointer;
 }
+
+.menu-item {
+    color: #ffffff;
+    letter-spacing: 2px;
+    font-size: 32px;
+}
+
+@media screen and (max-width: 1400px) {
+    .menu-item {
+        font-size: 28px;
+    }
+}
+
+@media screen and (max-width: 1024px) {
+    .menu-item {
+        font-size: 24px;
+    }
+}
+
+@media screen and (max-width: 768px) {
+    .menu-item {
+        font-size: 16px;
+    }
+}
