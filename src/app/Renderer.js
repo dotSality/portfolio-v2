@@ -9,6 +9,7 @@ import { ShaderPass } from "three/examples/jsm/postprocessing/ShaderPass";
 import { GammaCorrectionShader } from "three/examples/jsm/shaders/GammaCorrectionShader";
 import { FXAAShader } from "three/examples/jsm/shaders/FXAAShader";
 import { OutlinePass } from "three/examples/jsm/postprocessing/OutlinePass";
+import { CSS2DRenderer } from "three/examples/jsm/renderers/CSS2DRenderer";
 
 export class Renderer extends EventEmitter {
   constructor() {
@@ -27,7 +28,7 @@ export class Renderer extends EventEmitter {
     this.outlineObjects = [];
 
     this.setInstance();
-
+    this._setCSSRenderer();
     // this.app.resources.on(EVENTS_ENUM.READY, () => {
     this.setEffectComposer();
     this.setEffectPasses();
@@ -36,6 +37,14 @@ export class Renderer extends EventEmitter {
     this.cursor.on(EVENTS_ENUM.CLICK, () => {
       this.onCityClickHandler();
     });
+  }
+
+  _setCSSRenderer() {
+    this._cssRenderer = new CSS2DRenderer();
+    this._cssRenderer.setSize(this.sizes.width, this.sizes.height);
+    this._cssRenderer.domElement.style.position = "absolute";
+    this._cssRenderer.domElement.style.pointerEvents = "none";
+    document.body.appendChild(this._cssRenderer.domElement);
   }
 
   setInstance() {
@@ -114,7 +123,7 @@ export class Renderer extends EventEmitter {
   }
 
   async onCityClickHandler() {
-    // REFACTOR THIS CLICK HANDLE LOGIC
+    // EXTRACT THIS
     if (this.outlineObjects.length > 0 && !this.camera.isBlurringIn) {
       const outlinedObject = this.outlineObjects[0];
       if (outlinedObject.name === "mergecity") {
@@ -136,7 +145,9 @@ export class Renderer extends EventEmitter {
         this.raycaster.setRaycasterTargets(null);
         this._roomWorld.setMenuMesh();
       } else if (outlinedObject.name === "backButtonMesh") {
-        console.log("OFF CLICK");
+        this._roomWorld._menu.destroy();
+        this.camera.resetControls();
+        this.camera.trigger(EVENTS_ENUM.FADE_TO_ROOM)
       } else {
         const page = outlinedObject.name;
         if (this._roomWorld._menu) {

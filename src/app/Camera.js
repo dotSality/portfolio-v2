@@ -120,7 +120,7 @@ export class Camera extends EventEmitter {
   }
 
   resetControls() {
-    this.instance.position.reset();
+    // this.instance.position.reset();
     this.controls.target.set(0, 0, 0);
     this.controls.maxPolarAngle = Math.PI / 4 + Math.PI / 6;
     this.controls.enableRotate = true;

@@ -14,6 +14,10 @@ export class Cursor extends EventEmitter {
       this.mouse.y = e.clientY;
     });
 
+    window.addEventListener("contextmenu", (e) => {
+      e.preventDefault();
+    });
+
     window.onmousedown = (e) => {
       this.onMouseDownCoord = {
         x: e.clientX,
@@ -23,7 +27,10 @@ export class Cursor extends EventEmitter {
     window.onmouseup = (e) => {
       const x = e.clientX;
       const y = e.clientY;
-      if (x === this.onMouseDownCoord.x && y === this.onMouseDownCoord.y) {
+      if (x === this.onMouseDownCoord.x
+        && y === this.onMouseDownCoord.y
+        // check if main mouse button was clicked
+        && e.button === 0) {
         this.trigger(EVENTS_ENUM.CLICK);
       }
       this.onMouseDownCoord = null;

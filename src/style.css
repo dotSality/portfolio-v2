@@ -105,20 +105,20 @@ body {
     font-size: 32px;
 }
 
-@media screen and (max-width: 1400px) {
-    .menu-item {
-        font-size: 28px;
-    }
-}
-
-@media screen and (max-width: 1024px) {
+@media screen and (max-width: 1400px), screen and (max-height: 768px) {
     .menu-item {
         font-size: 24px;
     }
 }
 
-@media screen and (max-width: 768px) {
+@media screen and (max-width: 1024px), screen and (max-height: 640px) {
     .menu-item {
-        font-size: 16px;
+        font-size: 18px;
+    }
+}
+
+@media screen and (max-width: 768px), screen and (max-height: 512px) {
+    .menu-item {
+        font-size: 14px;
     }
 }

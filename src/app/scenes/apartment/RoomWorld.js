@@ -82,6 +82,10 @@ export class RoomWorld extends EventEmitter {
     });
   }
 
+  _backToRoom() {
+    this._menu.destroy();
+  }
+
   initWorld() {
     this._setScene();
     this._setLights();
