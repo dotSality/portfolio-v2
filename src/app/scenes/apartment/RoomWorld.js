@@ -51,13 +51,13 @@ export class RoomWorld extends EventEmitter {
     this.scene.add(this.pointLight);
 
     this.app.debug.dat.addColor(this.pointLight, "color")
-        .name('room color');
+        .name("room color");
     this.app.debug.dat.add(this.pointLight, "intensity")
         .min(0)
         .max(10)
-        .name('point light intensity');
+        .name("point light intensity");
     this.app.debug.dat.addColor(this.ambientLight, "color")
-        .name('ambient color');
+        .name("ambient color");
   }
 
   update() {
@@ -76,14 +76,11 @@ export class RoomWorld extends EventEmitter {
           box.max.x - box.min.x,
           box.max.y - box.min.y
         );
+        console.log(sizes.x / sizes.y);
         this._menu = new TvMenu(sizes.x, sizes.y, tvPosition);
         this._menu.init();
       }
     });
-  }
-
-  _backToRoom() {
-    this._menu.destroy();
   }
 
   initWorld() {

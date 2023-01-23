@@ -18,8 +18,8 @@ export class TvMenu extends EventEmitter {
     this._backgroundColor = 0x040230;
 
     this._menuItemsLabels = [
+      "Who are we?",
       "Haven't heard about us?",
-      "Our specs",
       "Secret zone"
     ];
 
@@ -38,12 +38,13 @@ export class TvMenu extends EventEmitter {
     });
   }
 
-  _generateMenuPages() {
-
-  }
-
   _setCurrentPage(pageName) {
     this._currentPage?.destroy();
+    if (pageName === "menu-page") {
+      this._destroyBackButton();
+    } else {
+      this._setBackButton();
+    }
     this._currentPage = this._pages[pageName];
     this._currentPage.init();
   }
@@ -56,8 +57,36 @@ export class TvMenu extends EventEmitter {
     this._geometry = new THREE.PlaneGeometry(this._width, this._height, 4, 4);
   }
 
-  _setBackButton() {
+  _setTurnOffButton() {
     // BACK BUTTON
+    const buttonWidth = this._scaledWidth * 0.12;
+    const buttonHeight = this._scaledHeight * 0.094;
+    const backButtonGeometry = generateShapeGeometry(-buttonWidth / 2, -buttonHeight / 2, buttonWidth, buttonHeight, 0.2);
+    const backButtonMaterial = new THREE.MeshBasicMaterial({ color: this._menuItemBackgroundColor });
+    this._turnOffButtonMesh = new THREE.Mesh(backButtonGeometry, backButtonMaterial);
+    this._turnOffButtonMesh.name = "turnOffButtonMesh";
+    const turnOffButtonText = document.createElement("div");
+    turnOffButtonText.textContent = "Turn off";
+    turnOffButtonText.className = "menu-item";
+    const object = new CSS2DObject(turnOffButtonText);
+    this._turnOffButtonMesh.position.copy(this._initPosition);
+    this._turnOffButtonMesh.position.x += this._scaledWidth / 2 - 1.5;
+    this._turnOffButtonMesh.position.y += -this._scaledHeight / 2 + 1;
+    this._turnOffButtonMesh.add(object);
+    this._scene.add(this._turnOffButtonMesh);
+
+    this._raycaster.updateRaycasterTargets(this._turnOffButtonMesh);
+  }
+
+  _destroyTurnOffButton() {
+    const cssElement = this._turnOffButtonMesh.children[0];
+    cssElement.removeFromParent();
+    this._turnOffButtonMesh.geometry.dispose();
+    this._turnOffButtonMesh.material.dispose();
+    this._scene.remove(this._turnOffButtonMesh);
+  }
+
+  _setBackButton() {
     const buttonWidth = this._scaledWidth * 0.12;
     const buttonHeight = this._scaledHeight * 0.094;
     const backButtonGeometry = generateShapeGeometry(-buttonWidth / 2, -buttonHeight / 2, buttonWidth, buttonHeight, 0.2);
@@ -65,29 +94,37 @@ export class TvMenu extends EventEmitter {
     this._backButtonMesh = new THREE.Mesh(backButtonGeometry, backButtonMaterial);
     this._backButtonMesh.name = "backButtonMesh";
     const backButtonText = document.createElement("div");
-    backButtonText.textContent = "Turn off";
+    backButtonText.textContent = "Back";
     backButtonText.className = "menu-item";
     const object = new CSS2DObject(backButtonText);
     this._backButtonMesh.position.copy(this._initPosition);
-    this._backButtonMesh.position.x += this._scaledWidth / 2 - 1.5;
-    this._backButtonMesh.position.y += -this._scaledHeight / 2 + 1;
+    this._backButtonMesh.position.x -= this._scaledWidth / 2 - 1.5;
+    this._backButtonMesh.position.y -= this._scaledHeight / 2 - 1;
     this._backButtonMesh.add(object);
     this._scene.add(this._backButtonMesh);
 
     this._raycaster.updateRaycasterTargets(this._backButtonMesh);
+
+    this.on("back-button", () => {
+      this._setCurrentPage("menu-page");
+    });
   }
 
   _destroyBackButton() {
-    const cssElement = this._backButtonMesh.children[0];
-    cssElement.removeFromParent();
-    this._backButtonMesh.geometry.dispose();
-    this._backButtonMesh.material.dispose();
-    this._scene.remove(this._backButtonMesh);
+    const button = this._scene.getObjectByName("backButtonMesh");
+    if (button) {
+      const cssElement = this._backButtonMesh.children[0];
+      cssElement.removeFromParent();
+      this._backButtonMesh.geometry.dispose();
+      this._backButtonMesh.material.dispose();
+      this._raycaster.filterRaycasterTargets(this._backButtonMesh.id);
+      this._scene.remove(this._backButtonMesh);
+    }
   }
 
   _setOptions() {
-    const menuItemWidth = this._scaledWidth * 0.6; // geometry size * size percentage * scale value
-    const menuItemHeight = this._scaledHeight * 0.125; // geometry size * size percentage * scale value
+    const menuItemWidth = this._scaledWidth * 0.6;
+    const menuItemHeight = this._scaledHeight * 0.125;
     const menuItemMaterial = new THREE.MeshBasicMaterial({ color: this._menuItemBackgroundColor });
 
     const menuItemGeometry = generateShapeGeometry(-menuItemWidth / 2, -menuItemHeight / 2, menuItemWidth, menuItemHeight, 0.5);
@@ -100,15 +137,12 @@ export class TvMenu extends EventEmitter {
       element.textContent = label;
       const object = new CSS2DObject(element);
       const menuItemMesh = new THREE.Mesh(menuItemGeometry, menuItemMaterial);
-      menuItemMesh.name = `${label}-page`;
+      menuItemMesh.name = label;
       menuItemMesh.position.copy(this._initPosition);
       menuItemMesh.position.y -= idx * 2 - 2;
       menuItemMesh.add(object);
       this._raycaster.updateRaycasterTargets(menuItemMesh);
       menuGroup.add(menuItemMesh);
-      this.on(`${label}-page`, (name) => {
-        this._setCurrentPage(name);
-      });
     });
 
     this._scene.add(menuGroup);
@@ -121,6 +155,7 @@ export class TvMenu extends EventEmitter {
           if (child instanceof THREE.Mesh) {
             child.geometry.dispose();
             child.material.dispose();
+            this._raycaster.filterRaycasterTargets(child.id);
           }
           if (child instanceof CSS2DObject) {
             child.removeFromParent();
@@ -151,7 +186,7 @@ export class TvMenu extends EventEmitter {
     const textObject = new CSS2DObject(textElement);
     pageMesh.add(textObject);
 
-    this._pages["Haven't heard about us?-page"] = {
+    this._pages[this._menuItemsLabels[0]] = {
       page: pageMesh,
       destroy: () => {
         pageMesh.traverse((child) => {
@@ -182,7 +217,7 @@ export class TvMenu extends EventEmitter {
     this._setMaterial();
     this._setGeometry();
     this._setMesh();
-    this._setBackButton();
+    this._setTurnOffButton();
     this._setOptions();
     this._setWelcomePage();
   }
@@ -196,11 +231,10 @@ export class TvMenu extends EventEmitter {
     this._currentPage.destroy();
     this._material.dispose();
     this._geometry.dispose();
+    this._destroyTurnOffButton();
     this._destroyBackButton();
     this._scene.remove(this._mesh);
 
-    this._menuItemsLabels.forEach((label) => {
-      this.off(`${label}-page`);
-    });
+    this.off("change-page");
   }
 }

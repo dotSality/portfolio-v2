@@ -144,14 +144,16 @@ export class Renderer extends EventEmitter {
         this.camera.moveControlsTo(posVec, lookVec);
         this.raycaster.setRaycasterTargets(null);
         this._roomWorld.setMenuMesh();
-      } else if (outlinedObject.name === "backButtonMesh") {
+      } else if (outlinedObject.name === "turnOffButtonMesh") {
         this._roomWorld._menu.destroy();
         this.camera.resetControls();
-        this.camera.trigger(EVENTS_ENUM.FADE_TO_ROOM)
+        this.camera.trigger(EVENTS_ENUM.FADE_TO_ROOM);
+      } else if (outlinedObject.name === "backButtonMesh") {
+        this._roomWorld._menu.trigger("change-page", ["menu-page"]);
       } else {
         const page = outlinedObject.name;
         if (this._roomWorld._menu) {
-          this._roomWorld._menu.trigger(page, [page]);
+          this._roomWorld._menu.trigger("change-page", [page]);
         }
       }
     }

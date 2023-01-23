@@ -42,6 +42,10 @@ export class AppRaycaster extends EventEmitter {
     }
   }
 
+  filterRaycasterTargets(_id) {
+    this.raycasterTargets = this.raycasterTargets.filter((object) => object.id !== _id);
+  }
+
   update() {
     const x = this.mouse.x / this.sizes.width * 2 - 1;
     const y = 1 - this.mouse.y / this.sizes.height * 2;
