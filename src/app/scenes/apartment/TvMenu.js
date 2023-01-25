@@ -3,6 +3,7 @@ import { App } from "../../App";
 import { CSS2DObject } from "three/examples/jsm/renderers/CSS2DRenderer";
 import { generateShapeGeometry } from "../../../helpers/helpers";
 import { EventEmitter } from "../../utils/EventEmitter";
+import { SnakeCanvas } from "./SnakeCanvas";
 
 export class TvMenu extends EventEmitter {
   constructor(width, height, position) {
@@ -179,6 +180,24 @@ export class TvMenu extends EventEmitter {
     return textMesh;
   }
 
+  _setSecretZonePage() {
+    this._pages[this._menuItemsLabels[2]] = {
+      destroy: () => {
+        this._destroySecretZonePage();
+        console.log("snake destroy");
+      },
+      init: () => {
+        this._snakeGame = new SnakeCanvas(this._scaledHeight * 0.7, this._initPosition);
+        this._snakeGame.init();
+      }
+    };
+  }
+
+  _destroySecretZonePage() {
+    this._snakeGame.destroy();
+    this._snakeGame = null;
+  }
+
   _setWelcomePage() {
     const pageMesh = this._getPageMesh();
     const textElement = document.createElement("div");
@@ -220,11 +239,13 @@ export class TvMenu extends EventEmitter {
     this._setTurnOffButton();
     this._setOptions();
     this._setWelcomePage();
+    this._setSecretZonePage();
   }
 
   update() {
     this._cssRenderer.setSize(this._sizes.width, this._sizes.height);
     this._cssRenderer.render(this._scene, this._camera.instance);
+    this._snakeGame?.update();
   }
 
   destroy() {

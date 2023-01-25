@@ -150,10 +150,12 @@ export class Renderer extends EventEmitter {
         this.camera.trigger(EVENTS_ENUM.FADE_TO_ROOM);
       } else if (outlinedObject.name === "backButtonMesh") {
         this._roomWorld._menu.trigger("change-page", ["menu-page"]);
+      } else if (outlinedObject.name === "Secret zone") {
+        this._roomWorld._menu.trigger("change-page", [outlinedObject.name]);
+        this._roomWorld._menu.trigger("snake-game");
       } else {
-        const page = outlinedObject.name;
         if (this._roomWorld._menu) {
-          this._roomWorld._menu.trigger("change-page", [page]);
+          this._roomWorld._menu.trigger("change-page", [outlinedObject.name]);
         }
       }
     }

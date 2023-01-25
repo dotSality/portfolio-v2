@@ -52,18 +52,6 @@ export class App extends EventEmitter {
     this.loadingMessage.on(EVENTS_ENUM.READY_CLICK, () => {
       this.trigger(EVENTS_ENUM.APP_START);
     });
-
-    this.debugObject = {
-      goToRoom: async () => {
-        await this.goToRoomWorld();
-      },
-      goToGlobe: async () => {
-        await this.goToGlobeWorld();
-      },
-    };
-    const folder = this.debug.dat.addFolder("scenes");
-    folder.add(this.debugObject, "goToRoom");
-    folder.add(this.debugObject, "goToGlobe");
   }
 
   async goToRoomWorld() {
