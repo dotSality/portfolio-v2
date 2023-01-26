@@ -3,4 +3,5 @@ export const TEXTURES_NAMES_ENUM = {
   GLOBE_CITY_BAKED: "globeBakedCityTexture",
   GLOBE_ROADS_BAKED: "globeBakedRoadsTexture",
   ENV_TEXTURE: "environmentTexture",
+  MENU_INTRO_PAGE_TEXTURE: "menuIntroPageTexture",
 };

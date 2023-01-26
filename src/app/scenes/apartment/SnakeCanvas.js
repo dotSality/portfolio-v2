@@ -24,6 +24,7 @@ export class SnakeCanvas {
     this._isLoading = true;
     this._loadingStatus = 0;
     this._restartTimer = 10000;
+    this._isMoved = false;
 
     this._app.debug.dat.add({
       restart: () => {
@@ -159,25 +160,28 @@ export class SnakeCanvas {
   }
 
   _keyDown(e) {
-    switch (e.key) {
-      case "ArrowLeft":
-        if (this._velocity.x === 1) return;
-        this._velocity.set(-1, 0);
-        break;
-      case "ArrowUp":
-        if (this._velocity.y === 1) return;
-        this._velocity.set(0, -1);
-        break;
-      case "ArrowRight":
-        if (this._velocity.x === -1) return;
-        this._velocity.set(1, 0);
-        break;
-      case "ArrowDown":
-        if (this._velocity.y === -1) return;
-        this._velocity.set(0, 1);
-        break;
-      default:
-        break;
+    if (!this._isMoved) {
+      switch (e.key) {
+        case "ArrowLeft":
+          if (this._velocity.x === 1) return;
+          this._velocity.set(-1, 0);
+          break;
+        case "ArrowUp":
+          if (this._velocity.y === 1) return;
+          this._velocity.set(0, -1);
+          break;
+        case "ArrowRight":
+          if (this._velocity.x === -1) return;
+          this._velocity.set(1, 0);
+          break;
+        case "ArrowDown":
+          if (this._velocity.y === -1) return;
+          this._velocity.set(0, 1);
+          break;
+        default:
+          break;
+      }
+      this._isMoved = true;
     }
   }
 
@@ -204,6 +208,7 @@ export class SnakeCanvas {
     if (!this._isFinished) {
       this._delta += this._speed;
       if (this._canvas && this._delta > 30) {
+        this._isMoved = false;
         this._canvasTexture.needsUpdate = true;
         this._changeSnakePosition();
         const result = this._isWallBang();
@@ -223,6 +228,7 @@ export class SnakeCanvas {
 
   restart() {
     this._isFinished = false;
+    this._isMoved = false;
     this._restartTimer = 10000;
     this._headX = 10;
     this._headY = 10;
@@ -265,6 +271,7 @@ export class SnakeCanvas {
     this._restartTimer = 10000;
     this._loadingStatus = 0;
     this._isLoading = true;
+    this._isMoved = false;
 
     this._canvasTexture = new CanvasTexture(this._canvas, THREE.UVMapping);
     this._canvasTexture.needsUpdate = true;

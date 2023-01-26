@@ -4,6 +4,7 @@ import { CSS2DObject } from "three/examples/jsm/renderers/CSS2DRenderer";
 import { generateShapeGeometry } from "../../../helpers/helpers";
 import { EventEmitter } from "../../utils/EventEmitter";
 import { SnakeCanvas } from "./SnakeCanvas";
+import { TEXTURES_NAMES_ENUM } from "../../../constants/texturesName";
 
 export class TvMenu extends EventEmitter {
   constructor(width, height, position) {
@@ -13,6 +14,7 @@ export class TvMenu extends EventEmitter {
     this._sizes = this._app.sizes;
     this._camera = this._app.camera;
     this._raycaster = this._app.raycaster;
+    this._resources = this._app.resources;
     this._cssRenderer = this._app.renderer._cssRenderer;
 
     this._menuItemBackgroundColor = 0x8123b8;
@@ -20,7 +22,7 @@ export class TvMenu extends EventEmitter {
 
     this._menuItemsLabels = [
       "Who are we?",
-      "Haven't heard about us?",
+      "Contact us",
       "Secret zone"
     ];
 
@@ -73,6 +75,7 @@ export class TvMenu extends EventEmitter {
     this._turnOffButtonMesh.position.copy(this._initPosition);
     this._turnOffButtonMesh.position.x += this._scaledWidth / 2 - 1.5;
     this._turnOffButtonMesh.position.y += -this._scaledHeight / 2 + 1;
+    this._turnOffButtonMesh.position.z += 0.02;
     this._turnOffButtonMesh.add(object);
     this._scene.add(this._turnOffButtonMesh);
 
@@ -101,6 +104,7 @@ export class TvMenu extends EventEmitter {
     this._backButtonMesh.position.copy(this._initPosition);
     this._backButtonMesh.position.x -= this._scaledWidth / 2 - 1.5;
     this._backButtonMesh.position.y -= this._scaledHeight / 2 - 1;
+    this._backButtonMesh.position.z += 0.02;
     this._backButtonMesh.add(object);
     this._scene.add(this._backButtonMesh);
 
@@ -171,10 +175,16 @@ export class TvMenu extends EventEmitter {
     this._currentPage = this._pages["menu-page"];
   }
 
-  _getPageMesh() {
+  _getPageMesh(texture = undefined) {
     const textMesh = new THREE.Mesh(
       new THREE.PlaneGeometry(this._scaledWidth, this._scaledHeight, 2, 2),
-      new THREE.MeshBasicMaterial({ transparent: true, opacity: 0 }),
+      new THREE.MeshBasicMaterial({
+        transparent: true,
+        opacity: texture ? 1 : 0,
+        map: texture,
+        color: 0xffffff,
+        needsUpdate: true,
+      }),
     );
     textMesh.position.copy(this._initPosition);
     return textMesh;
@@ -199,24 +209,16 @@ export class TvMenu extends EventEmitter {
   }
 
   _setWelcomePage() {
-    const pageMesh = this._getPageMesh();
-    const textElement = document.createElement("div");
-    textElement.textContent = "Lorem ipsum dolor sit amet, consectetur adipisicing elit. Blanditiis dolor, voluptatum? Accusamus, alias amet asperiores aspernatur doloribus, et eum id ipsa labore mollitia quas quos repellendus sapiente ut veritatis voluptatum!";
-    const textObject = new CSS2DObject(textElement);
-    pageMesh.add(textObject);
-
+    const welcomePageTexture = this._resources.items[TEXTURES_NAMES_ENUM.MENU_INTRO_PAGE_TEXTURE];
+    welcomePageTexture.encoding = THREE.sRGBEncoding;
+    const pageMesh = this._getPageMesh(welcomePageTexture);
+    pageMesh.scale.set(0.9, 0.9, 0.9);
+    pageMesh.position.y += 0.7;
     this._pages[this._menuItemsLabels[0]] = {
       page: pageMesh,
       destroy: () => {
-        pageMesh.traverse((child) => {
-          if (child instanceof THREE.Mesh) {
-            child.geometry.dispose();
-            child.material.dispose();
-          }
-          if (child instanceof CSS2DObject) {
-            child.removeFromParent();
-          }
-        });
+        pageMesh.geometry.dispose();
+        pageMesh.material.dispose();
         this._scene.remove(pageMesh);
       },
       init: () => {

@@ -5,6 +5,11 @@ export const sources = [
     name: "particleTexture",
   },
   {
+    type: "texture",
+    path: "/textures/room/menuIntroPage.png",
+    name: "menuIntroPageTexture",
+  },
+  {
     type: "gltfModel",
     path: "/models/globeRoads.glb",
     name: "globeRoadsModel",
