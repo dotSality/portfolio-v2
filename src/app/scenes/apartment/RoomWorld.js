@@ -5,6 +5,8 @@ import { RESOURCES_NAMES_ENUM } from "../../../constants/modelNames";
 import { EVENTS_ENUM } from "../../../constants/events";
 import { TvMenu } from "./TvMenu";
 import { OBJECT_NAMES_ENUM } from "../../../constants/objectNames";
+import noiseVertexShader from "../../../shaders/noise/noiseVertex.glsl";
+import noiseFragmentShader from "../../../shaders/noise/noiseFragment.glsl";
 
 export class RoomWorld extends EventEmitter {
   constructor() {
@@ -21,6 +23,19 @@ export class RoomWorld extends EventEmitter {
     this._camera.on(EVENTS_ENUM.FADE_TO_ROOM, () => {
       this._raycaster.setRaycasterTargets(this._raycastingTargets);
     });
+
+    this._setNoiseShader();
+  }
+
+  _setNoiseShader() {
+    this._noiseShaderMaterial = new THREE.ShaderMaterial({
+      vertexShader: noiseVertexShader,
+      fragmentShader: noiseFragmentShader,
+      side: THREE.DoubleSide,
+      uniforms: {
+        uTime: { value: 0 }
+      }
+    });
   }
 
   _setScene() {
@@ -34,6 +49,9 @@ export class RoomWorld extends EventEmitter {
     this._roomScene.traverse((child) => {
       if (child.name === OBJECT_NAMES_ENUM.EXIT_SIGN ||
         child.name === OBJECT_NAMES_ENUM.TV_PANEL) {
+        if (child.name === OBJECT_NAMES_ENUM.TV_PANEL) {
+          child.material = this._noiseShaderMaterial;
+        }
         targets.push(child);
       }
     });
@@ -62,6 +80,7 @@ export class RoomWorld extends EventEmitter {
   }
 
   update() {
+    this._noiseShaderMaterial.uniforms.uTime.value = this._time.elapsedTime;
     if (this._menu) {
       this._menu.update();
     }

@@ -53,7 +53,7 @@ export class Globe {
     this.setGeometry();
     this.setMaterial();
     this.setMesh();
-    this.setDebugTools();
+    // this.setDebugTools();
   }
 
   destroy() {
