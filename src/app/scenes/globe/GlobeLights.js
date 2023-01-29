@@ -1,5 +1,6 @@
 import { App } from "../../App";
 import * as THREE from "three";
+import { COLORS_ENUM } from "../../../constants/colors";
 
 export class GlobeLights {
   constructor() {
@@ -10,8 +11,8 @@ export class GlobeLights {
   }
 
   _setLight() {
-    this._light = new THREE.SpotLight(0xffffff, 20, 60, 120, 1);
-    this._light.position.set(25, 40, 25);
+    this._light = new THREE.SpotLight(COLORS_ENUM.WHITE, 30, 60, 120, 1, 0.9);
+    this._light.position.set(15, 40, -10);
     this._scene.add(this._light);
     this._scene.add(this._light.target);
     this._light.visible = false;
