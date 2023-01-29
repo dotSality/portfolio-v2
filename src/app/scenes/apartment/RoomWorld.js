@@ -91,15 +91,15 @@ export class RoomWorld extends EventEmitter {
 
   destroyWorld() {
     this._ambientLight.dispose();
-    this.scene.remove(this._ambientLight);
+    this._scene.remove(this._ambientLight);
     this._pointLight.dispose();
-    this.scene.remove(this._pointLight);
+    this._scene.remove(this._pointLight);
     this._roomScene.traverse((child) => {
       if (child instanceof THREE.Mesh) {
         child.geometry.dispose();
         child.material.dispose();
       }
     });
-    this.scene.remove(this._roomScene);
+    this._scene.remove(this._roomScene);
   }
 }

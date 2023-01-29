@@ -23,13 +23,11 @@ export class Globe {
 
   setMaterial() {
     this._material = new THREE.MeshPhysicalMaterial({
-      color: COLORS_ENUM.WHITE,
+      color: COLORS_ENUM.GLOBE_MATERIAL_COLOR,
       roughness: 0,
       metalness: 0,
-      transmission: 1,
+      transmission: 0.78,
       reflectivity: 1,
-      clearcote: 1,
-      clearcoatRoughness: 1,
       thickness: 0.3,
     });
   }
@@ -44,8 +42,7 @@ export class Globe {
     this._debug.dat.add(this._mesh.material, "metalness").min(0).max(1).step(0.01);
     this._debug.dat.add(this._mesh.material, "transmission").min(0).max(1).step(0.01);
     this._debug.dat.add(this._mesh.material, "reflectivity").min(0).max(1).step(0.01);
-    this._debug.dat.add(this._mesh.material, "clearcoat").min(0).max(1).step(0.01);
-    this._debug.dat.add(this._mesh.material, "clearcoatRoughness").min(0).max(1).step(0.01);
+    this._debug.dat.addColor(this._mesh.material, "color").name("Globe color");
   }
 
   getMesh() {

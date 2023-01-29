@@ -62,6 +62,7 @@ export class GlobeScene {
 
     this._globeCity = this._resources.items[RESOURCES_NAMES_ENUM.GLOBE_CITY].scene;
     this._globeRoads = this._resources.items[RESOURCES_NAMES_ENUM.GLOBE_ROADS].scene;
+    this._globeCity.rotation.y -= Math.PI / 2 - Math.PI / 6;
     // Set baked city texture
     this._globeCity.traverse((child) => {
       if (/(white)/.test(child.name)) {

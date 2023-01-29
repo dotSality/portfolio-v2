@@ -30,7 +30,8 @@ export class Cursor extends EventEmitter {
       if (x === this._onMouseDownCoord.x
         && y === this._onMouseDownCoord.y
         // check if main mouse button was clicked
-        && e.button === 0) {
+        && e.button === 0
+      ) {
         this.trigger(EVENTS_ENUM.CLICK);
       }
       this._onMouseDownCoord = null;
