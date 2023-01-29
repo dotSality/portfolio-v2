@@ -5,8 +5,8 @@ import { RESOURCES_NAMES_ENUM } from "../../../constants/modelNames";
 import { EVENTS_ENUM } from "../../../constants/events";
 import { TvMenu } from "./TvMenu";
 import { OBJECT_NAMES_ENUM } from "../../../constants/objectNames";
-import noiseVertexShader from "../../../shaders/noise/noiseVertex.glsl";
-import noiseFragmentShader from "../../../shaders/noise/noiseFragment.glsl";
+import { noiseVertex } from "../../../shaders/noise/noiseVertex";
+import { noiseFragment } from "../../../shaders/noise/noiseFragment";
 
 export class RoomWorld extends EventEmitter {
   constructor() {
@@ -29,11 +29,11 @@ export class RoomWorld extends EventEmitter {
 
   _setNoiseShader() {
     this._noiseShaderMaterial = new THREE.ShaderMaterial({
-      vertexShader: noiseVertexShader,
-      fragmentShader: noiseFragmentShader,
+      vertexShader: noiseVertex,
+      fragmentShader: noiseFragment,
       side: THREE.DoubleSide,
       uniforms: {
-        uTime: { value: 0 }
+        uTime: { value: 0 },
       }
     });
   }

@@ -1,8 +1,9 @@
 import * as THREE from "three";
-import { App } from "../../App";
 import { CanvasTexture } from "three";
-import snakeCanvasFragmentShader from "../../../shaders/snakeCanvas/snakeCanvasFragmentShader.glsl";
-import snakeCanvasVertexShader from "../../../shaders/snakeCanvas/snakeCanvasVertexShader.glsl";
+import { App } from "../../App";
+import { snakeCanvasVertex } from "../../../shaders/snakeCanvas/snakeCanvasVertex";
+import { snakeCanvasFragment } from "../../../shaders/snakeCanvas/snakeCanvasFragment";
+import { COLORS_STRING_ENUM } from "../../../constants/colors";
 
 export class SnakeCanvas {
   constructor(size, position) {
@@ -35,7 +36,7 @@ export class SnakeCanvas {
     if (this._isLoading) {
       this._canvasTexture.needsUpdate = true;
       this._loadingStatus += 1;
-      this._ctx.fillStyle = "#ffffff";
+      this._ctx.fillStyle = COLORS_STRING_ENUM.WHITE_STRING;
 
       const initX = 20;
       const initY = this._canvas.clientHeight / 2 - 2;
@@ -69,7 +70,7 @@ export class SnakeCanvas {
       );
       this._restartTimer -= this._time.delta;
       const seconds = Math.floor(this._restartTimer / 1000);
-      this._ctx.fillStyle = "#ffffff";
+      this._ctx.fillStyle = COLORS_STRING_ENUM.WHITE_STRING;
       this._ctx.font = "30px custom";
       this._ctx.fillText(
         "Restart in " + seconds,
@@ -100,7 +101,7 @@ export class SnakeCanvas {
     }
 
     if (wallBang) {
-      this._ctx.fillStyle = "#ffffff";
+      this._ctx.fillStyle = COLORS_STRING_ENUM.WHITE_STRING;
       this._ctx.font = "50px custom";
       this._ctx.fillText("Game Over! ", this._canvas.clientWidth / 4, this._canvas.clientHeight / 2);
     }
@@ -109,18 +110,18 @@ export class SnakeCanvas {
   }
 
   _drawScore() {
-    this._ctx.fillStyle = "#ffffff";
+    this._ctx.fillStyle = COLORS_STRING_ENUM.WHITE_STRING;
     this._ctx.font = "20px custom";
     this._ctx.fillText("Score: " + this._score, this._canvas.clientWidth - 90, 30);
   }
 
   _clearScreen() {
-    this._ctx.fillStyle = "#000000";
+    this._ctx.fillStyle = COLORS_STRING_ENUM.BLACK_STRING;
     this._ctx.fillRect(0, 0, this._canvas.clientWidth, this._canvas.clientHeight);
   }
 
   _drawSnake() {
-    this._ctx.fillStyle = "#07A252";
+    this._ctx.fillStyle = COLORS_STRING_ENUM.SNAKE_PART;
     for (let i = 0 ; i < this._parts.length ; i += 1) {
       const part = this._parts.at(i);
       this._ctx.fillRect(part.x * this._foodCount, part.y * this._foodCount, this._tileSize, this._tileSize);
@@ -130,7 +131,7 @@ export class SnakeCanvas {
     if (this._parts.length > this._tailLength) {
       this._parts.shift();
     }
-    this._ctx.fillStyle = "#07A252";
+    this._ctx.fillStyle = COLORS_STRING_ENUM.SNAKE_PART;
     this._ctx.fillRect(this._headX * this._foodCount, this._headY * this._foodCount, this._tileSize, this._tileSize);
   }
 
@@ -140,7 +141,7 @@ export class SnakeCanvas {
   }
 
   _drawGrass() {
-    this._ctx.fillStyle = "#A6FF00";
+    this._ctx.fillStyle = COLORS_STRING_ENUM.SNAKE_GRASS;
     this._ctx.fillRect(this._grassX * this._foodCount, this._grassY * this._foodCount, this._tileSize, this._tileSize);
   }
 
@@ -182,8 +183,8 @@ export class SnakeCanvas {
   _setFieldMesh() {
     this._fieldGeometry = new THREE.PlaneGeometry(this._size, this._size, 24, 24);
     this._fieldMaterial = new THREE.ShaderMaterial({
-      fragmentShader: snakeCanvasFragmentShader,
-      vertexShader: snakeCanvasVertexShader,
+      fragmentShader: snakeCanvasFragment,
+      vertexShader: snakeCanvasVertex,
       uniforms: {
         uTexture: { value: this._canvasTexture }
       }
