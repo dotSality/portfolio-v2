@@ -180,7 +180,6 @@ export class TvMenu extends EventEmitter {
         opacity: texture ? 1 : 0,
         map: texture,
         color: COLORS_ENUM.WHITE,
-        needsUpdate: true,
       }),
     );
     textMesh.position.copy(this._initPosition);
