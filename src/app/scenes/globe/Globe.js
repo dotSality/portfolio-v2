@@ -1,5 +1,6 @@
 import * as THREE from "three";
 import { App } from "../../App";
+import { COLORS_ENUM } from "../../../constants/colors";
 
 export class Globe {
   constructor() {
@@ -22,6 +23,7 @@ export class Globe {
 
   setMaterial() {
     this.material = new THREE.MeshPhysicalMaterial({
+      color: COLORS_ENUM.WHITE,
       roughness: 0,
       metalness: 0,
       transmission: 1,

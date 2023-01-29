@@ -11,22 +11,22 @@ export class Resources extends EventEmitter {
     super();
     this.sources = sources;
     this.items = {};
-    this.toLoad = this.sources.length;
-    this.loaded = 0;
+    this._toLoad = this.sources.length;
+    this._loaded = 0;
 
-    this.setLoaders();
-    this.startLoading();
+    this._setLoaders();
+    this._startLoading();
   }
 
-  setLoaders() {
+  _setLoaders() {
     const loadingManager = new THREE.LoadingManager(
       undefined,
       (_, loaded, total) => {
         this.trigger(EVENTS_ENUM.LOADING_STATUS, ([loaded / total]));
       }
     );
-    this.loaders = {};
-    Object.defineProperty(this.loaders, "gltfLoader", {
+    this._loaders = {};
+    Object.defineProperty(this._loaders, "gltfLoader", {
       value: (function () {
         const gltfLoader = new GLTFLoader(loadingManager);
         const dracoLoader = new DRACOLoader();
@@ -36,51 +36,51 @@ export class Resources extends EventEmitter {
       })(),
       writable: false,
     });
-    Object.defineProperty(this.loaders, "textureLoader", {
+    Object.defineProperty(this._loaders, "textureLoader", {
       value: new THREE.TextureLoader(loadingManager),
       writable: false,
     });
-    Object.defineProperty(this.loaders, "cubeTextureLoader", {
+    Object.defineProperty(this._loaders, "cubeTextureLoader", {
       value: new THREE.CubeTextureLoader(loadingManager),
       writable: false,
     });
-    Object.defineProperty(this.loaders, "hdrTextureLoader", {
+    Object.defineProperty(this._loaders, "hdrTextureLoader", {
       value: new RGBELoader(loadingManager),
       writable: false,
     });
   }
 
-  startLoading() {
+  _startLoading() {
     for (const source of this.sources) {
       if (source.type === "gltfModel") {
-        this.loaders["gltfLoader"].load(
+        this._loaders["gltfLoader"].load(
           source.path,
           (file) => {
-            this.handleLoadedSource(source, file);
+            this._handleLoadedSource(source, file);
           }
         );
       } else if (source.type === "texture") {
-        this.loaders["textureLoader"].load(
+        this._loaders["textureLoader"].load(
           source.path,
           (file) => {
-            this.handleLoadedSource(source, file);
+            this._handleLoadedSource(source, file);
           }
         );
       } else if (source.type === "hdrTexture") {
-        this.loaders["hdrTextureLoader"].load(
+        this._loaders["hdrTextureLoader"].load(
           source.path,
           (file) => {
-            this.handleLoadedSource(source, file);
+            this._handleLoadedSource(source, file);
           }
         );
       }
     }
   }
 
-  handleLoadedSource(source, file) {
+  _handleLoadedSource(source, file) {
     this.items[source.name] = file;
-    this.loaded += 1;
-    if (this.loaded === this.toLoad) {
+    this._loaded += 1;
+    if (this._loaded === this._toLoad) {
       this.trigger(EVENTS_ENUM.READY);
     }
   }

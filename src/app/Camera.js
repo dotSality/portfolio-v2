@@ -6,37 +6,37 @@ import { EventEmitter } from "./utils/EventEmitter";
 export class Camera extends EventEmitter {
   constructor() {
     super();
-    this.app = new App();
-    this.sizes = this.app.sizes;
-    this.scene = this.app.scene;
-    this.canvas = this.app.canvas;
+    this._app = new App();
+    this._sizes = this._app.sizes;
+    this._scene = this._app.scene;
+    this._canvas = this._app.canvas;
 
-    this.previousPosition = null;
+    this._previousPosition = null;
 
     this.init();
   }
 
   init() {
-    this.isBlurringIn = false;
-    this.isBlurringOut = false;
+    this._isBlurringIn = false;
+    this._isBlurringOut = false;
 
-    this.setInstance();
-    this.setOrbitControls();
+    this._setInstance();
+    this._setOrbitControls();
   }
 
-  setInstance() {
+  _setInstance() {
     this.instance = new THREE.PerspectiveCamera(
       35,
-      this.sizes.width / this.sizes.height,
+      this._sizes.width / this._sizes.height,
       0.1,
       200,
     );
     this.instance.position.set(70, 42.5, 70);
-    this.scene.add(this.instance);
+    this._scene.add(this.instance);
   }
 
-  setOrbitControls() {
-    this.controls = new OrbitControls(this.instance, this.canvas);
+  _setOrbitControls() {
+    this.controls = new OrbitControls(this.instance, this._canvas);
     this.controls.enableDamping = true;
 
     this.controls.minPolarAngle = Math.PI / 4;
@@ -51,18 +51,18 @@ export class Camera extends EventEmitter {
   }
 
   resize() {
-    this.instance.aspect = this.sizes.width / this.sizes.height;
+    this.instance.aspect = this._sizes.width / this._sizes.height;
     this.instance.updateProjectionMatrix();
   }
 
   update() {
     if (this.controls) {
       const oldPosition = this.instance.position.clone();
-      if (this.isBlurringIn) {
+      if (this._isBlurringIn) {
         const newPosition = oldPosition.multiplyScalar(0.994);
         this.instance.position.copy(newPosition);
       }
-      if (this.isBlurringOut) {
+      if (this._isBlurringOut) {
         const newPosition = oldPosition.multiplyScalar(1.006);
         this.instance.position.copy(newPosition);
       }
@@ -73,14 +73,14 @@ export class Camera extends EventEmitter {
 
   async runBlurInAnimation() {
     await new Promise((res) => {
-      this.isBlurringIn = true;
-      this.canvas.classList.add("blur-in");
+      this._isBlurringIn = true;
+      this._canvas.classList.add("blur-in");
       this.controls.enableRotate = false;
       this.controls.enableZoom = false;
       setTimeout(() => {
-        this.canvas.classList.remove("blur-in");
-        this.canvas.classList.add("blurred");
-        this.isBlurringIn = false;
+        this._canvas.classList.remove("blur-in");
+        this._canvas.classList.add("blurred");
+        this._isBlurringIn = false;
         this.controls.enableRotate = true;
         this.controls.enableZoom = true;
         res();
@@ -90,14 +90,14 @@ export class Camera extends EventEmitter {
 
   async runBlurOutAnimation() {
     await new Promise((res) => {
-      this.isBlurringOut = true;
-      this.canvas.classList.remove("blurred");
-      this.canvas.classList.add("blur-out");
+      this._isBlurringOut = true;
+      this._canvas.classList.remove("blurred");
+      this._canvas.classList.add("blur-out");
       this.controls.enableRotate = false;
       this.controls.enableZoom = false;
       setTimeout(() => {
-        this.canvas.classList.remove("blur-out");
-        this.isBlurringOut = false;
+        this._canvas.classList.remove("blur-out");
+        this._isBlurringOut = false;
         this.controls.enableRotate = true;
         this.controls.enableZoom = true;
         res();
@@ -106,7 +106,7 @@ export class Camera extends EventEmitter {
   }
 
   setPrevCameraCoords(posVec) {
-    this.previousPosition = posVec;
+    this._previousPosition = posVec;
   }
 
   moveControlsTo(posVec, lookVec) {
@@ -120,7 +120,6 @@ export class Camera extends EventEmitter {
   }
 
   resetControls() {
-    // this.instance.position.reset();
     this.controls.target.set(0, 0, 0);
     this.controls.maxPolarAngle = Math.PI / 4 + Math.PI / 6;
     this.controls.enableRotate = true;
@@ -129,7 +128,7 @@ export class Camera extends EventEmitter {
     this.controls.rotateSpeed = 0.5;
     this.controls.minDistance = 60;
     this.controls.maxDistance = 150;
-    this.instance.position.copy(this.previousPosition);
+    this.instance.position.copy(this._previousPosition);
     this.setPrevCameraCoords(null);
   }
 

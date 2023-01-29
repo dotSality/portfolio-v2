@@ -6,6 +6,7 @@ import { MeshSurfaceSampler } from "three/examples/jsm/math/MeshSurfaceSampler";
 import { getRandomCoord, getSign } from "../../../helpers/helpers";
 import { GlobeScene } from "./GlobeScene";
 import { TEXTURES_NAMES_ENUM } from "../../../constants/texturesName";
+import { COLORS_ENUM } from "../../../constants/colors";
 
 export class Snow extends EventEmitter {
   constructor() {
@@ -79,7 +80,7 @@ export class Snow extends EventEmitter {
       depthWrite: false,
       alphaMap: this.resources.items[TEXTURES_NAMES_ENUM.PARTICLE_TEXTURE],
       blending: THREE.AdditiveBlending,
-      color: "#ffffff",
+      color: COLORS_ENUM.WHITE,
     });
   }
 
@@ -107,17 +108,19 @@ export class Snow extends EventEmitter {
 
         const isParticleReset = testSpherical.radius > (this.globe.radius * 0.97);
 
-        const raycaster = new THREE.Raycaster(
-          new THREE.Vector3(currentX, currentY, currentZ),
-          new THREE.Vector3(velocityX, velocityY, velocityZ),
-          0,
-          2,
-        );
+        // TODO improve/remove snowflakes raycaster
+        // const raycaster = new THREE.Raycaster(
+        //   new THREE.Vector3(currentX, currentY, currentZ),
+        //   new THREE.Vector3(velocityX, velocityY, velocityZ),
+        //   0,
+        //   2,
+        // );
 
         // const int = raycaster.intersectObject(this.globeScene.sceneToIntersect);
         // if (int.length > 0) {
         //   console.log(int);
         // }
+
         if (currentY > 0.5 && !isParticleReset/* && int.length === 0*/) {
           this.geometry.attributes.position.array[index] += 0.1 * velocityX;
           this.geometry.attributes.position.array[index + 1] -= 0.1 * velocityY;
@@ -157,18 +160,5 @@ export class Snow extends EventEmitter {
     this.setGeometry();
     this.setMaterial();
     this.setPoints();
-    this.initDebug();
-  }
-
-  initDebug() {
-    this.debugObject = {};
-    this.debugFolder = this.debug.dat.addFolder("Snow");
-    Object.defineProperty(this.debugObject, "destroy", {
-      value: () => {
-        this.destroy();
-      },
-      writable: false,
-    });
-    this.debugFolder.add(this.debugObject, "destroy");
   }
 }

@@ -3,6 +3,8 @@ import { App } from "../../App";
 import { RESOURCES_NAMES_ENUM } from "../../../constants/modelNames";
 import { TEXTURES_NAMES_ENUM } from "../../../constants/texturesName";
 import { EVENTS_ENUM } from "../../../constants/events";
+import { COLORS_ENUM } from "../../../constants/colors";
+import { OBJECT_NAMES_ENUM } from "../../../constants/objectNames";
 
 export class GlobeScene {
   constructor() {
@@ -29,17 +31,17 @@ export class GlobeScene {
 
   _setModel() {
     // Window light material
-    const windowLightMaterial = new THREE.MeshBasicMaterial({ color: 0xffffff });
-    const windowDarkMaterial = new THREE.MeshBasicMaterial({ color: 0x212121 });
+    const windowLightMaterial = new THREE.MeshBasicMaterial({ color: COLORS_ENUM.WHITE });
+    const windowDarkMaterial = new THREE.MeshBasicMaterial({ color: COLORS_ENUM.CITY_WINDOW_DARK });
 
     // Fence material
-    const fenceMaterial = new THREE.MeshBasicMaterial({ color: 0x1c1c1c });
+    const fenceMaterial = new THREE.MeshBasicMaterial({ color: COLORS_ENUM.ROAD_FENCE });
 
     // Car lights material
-    const lightsMaterial = new THREE.MeshBasicMaterial({ color: 0xfaffad, });
+    const lightsMaterial = new THREE.MeshBasicMaterial({ color: COLORS_ENUM.CAR_LIGHTS, });
 
     // Street poles material
-    const streetPolesMaterial = new THREE.MeshBasicMaterial({ color: 0x0d0d0d });
+    const streetPolesMaterial = new THREE.MeshBasicMaterial({ color: COLORS_ENUM.STREET_POLES });
 
     // Baked city texture
     const bakedCityTexture = this.resources.items[TEXTURES_NAMES_ENUM.GLOBE_CITY_BAKED];
@@ -80,10 +82,10 @@ export class GlobeScene {
         child.renderOrder = 1;
       } else if (child.name.includes("fence")) {
         child.material = fenceMaterial;
-      } else if (child.name === "streetlights") {
+      } else if (child.name === OBJECT_NAMES_ENUM.STREET_LIGHTS) {
         child.material = streetPolesMaterial;
         child.material.side = THREE.DoubleSide;
-      } else if (child.name === "streetlamp") {
+      } else if (child.name === OBJECT_NAMES_ENUM.STREET_LAMP) {
         child.material = lightsMaterial;
         child.renderOrder = 1;
       } else if (child instanceof THREE.Mesh) {

@@ -10,6 +10,11 @@ export const sources = [
     name: "menuIntroPageTexture",
   },
   {
+    type: "texture",
+    path: "/textures/room/menuContactPage.png",
+    name: "menuContactPageTexture",
+  },
+  {
     type: "gltfModel",
     path: "/models/globeRoads.glb",
     name: "globeRoadsModel",

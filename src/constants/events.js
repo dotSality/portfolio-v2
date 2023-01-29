@@ -16,4 +16,7 @@ export const EVENTS_ENUM = {
   FADE_TO_CITY: "fade-to-city",
   READY_CLICK: "ready-click",
   APP_START: "app-start",
+  CHANGE_PAGE: "change-page",
+  GO_BACK_CLICK: "go-back-click",
+  SNAKE_GAME_INIT: "snake-game-init",
 };

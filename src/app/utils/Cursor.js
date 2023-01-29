@@ -7,7 +7,7 @@ export class Cursor extends EventEmitter {
     super();
     this.mouse = new THREE.Vector2();
 
-    this.onMouseDownCoord = null;
+    this._onMouseDownCoord = null;
 
     window.addEventListener("mousemove", (e) => {
       this.mouse.x = e.clientX;
@@ -19,7 +19,7 @@ export class Cursor extends EventEmitter {
     });
 
     window.onmousedown = (e) => {
-      this.onMouseDownCoord = {
+      this._onMouseDownCoord = {
         x: e.clientX,
         y: e.clientY,
       };
@@ -27,17 +27,13 @@ export class Cursor extends EventEmitter {
     window.onmouseup = (e) => {
       const x = e.clientX;
       const y = e.clientY;
-      if (x === this.onMouseDownCoord.x
-        && y === this.onMouseDownCoord.y
+      if (x === this._onMouseDownCoord.x
+        && y === this._onMouseDownCoord.y
         // check if main mouse button was clicked
         && e.button === 0) {
         this.trigger(EVENTS_ENUM.CLICK);
       }
-      this.onMouseDownCoord = null;
+      this._onMouseDownCoord = null;
     };
-
-    this.on(EVENTS_ENUM.CLICK, () => {
-      console.log("click event");
-    });
   }
 }
