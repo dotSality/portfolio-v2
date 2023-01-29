@@ -25,12 +25,6 @@ export class SnakeCanvas {
     this._loadingStatus = 0;
     this._restartTimer = 10000;
     this._isMoved = false;
-
-    this._app.debug.dat.add({
-      restart: () => {
-        this.restart();
-      }
-    }, "restart");
   }
 
   _createPart(x, y) {

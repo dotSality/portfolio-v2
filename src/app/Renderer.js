@@ -2,7 +2,6 @@ import * as THREE from "three";
 
 import { EventEmitter } from "./utils/EventEmitter";
 import { App } from "./App";
-import { EVENTS_ENUM } from "../constants/events";
 import { EffectComposer } from "three/examples/jsm/postprocessing/EffectComposer";
 import { RenderPass } from "three/examples/jsm/postprocessing/RenderPass";
 import { ShaderPass } from "three/examples/jsm/postprocessing/ShaderPass";
@@ -10,8 +9,7 @@ import { GammaCorrectionShader } from "three/examples/jsm/shaders/GammaCorrectio
 import { FXAAShader } from "three/examples/jsm/shaders/FXAAShader";
 import { OutlinePass } from "three/examples/jsm/postprocessing/OutlinePass";
 import { CSS2DRenderer } from "three/examples/jsm/renderers/CSS2DRenderer";
-import { TEXT_LABEL_ENUM } from "../constants/textLabels";
-import { OBJECT_NAMES_ENUM } from "../constants/objectNames";
+import { RaycasterClickHandler } from "./RaycasterClickHandler";
 
 export class Renderer extends EventEmitter {
   constructor() {
@@ -27,16 +25,12 @@ export class Renderer extends EventEmitter {
     this._roomWorld = this._app.roomWorld;
 
     this._raycaster = this._app.raycaster;
-    this._outlineObjects = [];
 
     this._setInstance();
     this._setCSSRenderer();
     this._setEffectComposer();
     this._setEffectPasses();
-
-    this._cursor.on(EVENTS_ENUM.CLICK, () => {
-      this._onCityClickHandler();
-    });
+    this._setRaycasterClickHandler();
   }
 
   _setCSSRenderer() {
@@ -109,58 +103,13 @@ export class Renderer extends EventEmitter {
     this._fxaaPass.material.uniforms["resolution"].value.y = 1 / (this._sizes.height * pixelRatio);
   }
 
-  _checkIntersection() {
-    this._raycaster.update();
-    const intersects = this._raycaster.intersects;
-    const outlineObject = intersects[0]?.object;
-    this._outlineObjects = outlineObject ? [outlineObject] : [];
-    if (outlineObject) {
-      this._canvas.classList.add("pointer");
-    } else {
-      this._canvas.classList.remove("pointer");
-    }
-    this._outlinePass.selectedObjects = this._outlineObjects;
-  }
-
-  async _onCityClickHandler() {
-    // TODO EXTRACT THIS
-    if (this._outlineObjects.length > 0 && !this._camera._isBlurringIn) {
-      const outlinedObject = this._outlineObjects[0];
-      if (outlinedObject.name === OBJECT_NAMES_ENUM.MERGED_CITY) {
-        await this._app.goToRoomWorld();
-      } else if (outlinedObject.name === OBJECT_NAMES_ENUM.EXIT_SIGN) {
-        await this._app.goToGlobeWorld();
-      } else if (outlinedObject.name === OBJECT_NAMES_ENUM.TV_PANEL) {
-        const prevPosition = this._camera.instance.position.clone();
-        const lookVec = new THREE.Vector3();
-        lookVec.setFromMatrixPosition(outlinedObject.matrixWorld);
-        const posVec = lookVec.clone();
-        posVec.z += 20;
-
-        this._camera.controls.rotateSpeed = 0;
-
-        this._camera.controls.enableRotate = false;
-        this._camera.setPrevCameraCoords(prevPosition);
-        this._camera.moveControlsTo(posVec, lookVec);
-        this._raycaster.setRaycasterTargets(null);
-        this._roomWorld.setMenuMesh();
-      } else if (outlinedObject.name === OBJECT_NAMES_ENUM.TURN_OFF_BUTTON) {
-        this._roomWorld._menu.destroy();
-        this._camera.resetControls();
-        this._camera.trigger(EVENTS_ENUM.FADE_TO_ROOM);
-      } else if (outlinedObject.name === OBJECT_NAMES_ENUM.GO_BACK_BUTTON) {
-        this._roomWorld._menu.trigger(EVENTS_ENUM.CHANGE_PAGE, [TEXT_LABEL_ENUM.MENU_PAGE]);
-      } else {
-        if (this._roomWorld._menu) {
-          this._roomWorld._menu.trigger(EVENTS_ENUM.CHANGE_PAGE, [outlinedObject.name]);
-        }
-      }
-    }
+  _setRaycasterClickHandler() {
+    this._raycasterClickHandler = new RaycasterClickHandler(this._outlinePass);
   }
 
   update() {
     this._effectComposer.render(this._time.delta);
-    this._checkIntersection();
+    this._raycasterClickHandler.update();
     this._updateFXAA();
   }
 }

@@ -4,20 +4,19 @@ import { App } from "../../App";
 import { RESOURCES_NAMES_ENUM } from "../../../constants/modelNames";
 import { EVENTS_ENUM } from "../../../constants/events";
 import { TvMenu } from "./TvMenu";
+import { OBJECT_NAMES_ENUM } from "../../../constants/objectNames";
 
 export class RoomWorld extends EventEmitter {
   constructor() {
     super();
 
-    this.app = new App();
-    this.resources = this.app.resources;
-    this.scene = this.app.scene;
-    this._camera = this.app.camera;
-    this._time = this.app.time;
+    this._app = new App();
+    this._resources = this._app.resources;
+    this._scene = this._app.scene;
+    this._camera = this._app.camera;
+    this._time = this._app.time;
 
-    this._prevTvMaterial = null;
-
-    this._raycaster = this.app.raycaster;
+    this._raycaster = this._app.raycaster;
 
     this._camera.on(EVENTS_ENUM.FADE_TO_ROOM, () => {
       this._raycaster.setRaycasterTargets(this._raycastingTargets);
@@ -25,39 +24,41 @@ export class RoomWorld extends EventEmitter {
   }
 
   _setScene() {
-    this.roomScene = this.resources.items[RESOURCES_NAMES_ENUM.ROOM_SCENE].scene;
+    this._roomScene = this._resources.items[RESOURCES_NAMES_ENUM.ROOM_SCENE].scene;
 
-    this.roomScene.scale.set(10, 10, 10);
-    this.roomScene.position.set(0, -20, 0);
+    this._roomScene.scale.set(10, 10, 10);
+    this._roomScene.position.set(0, -20, 0);
 
     const targets = [];
 
-    this.roomScene.traverse((child) => {
-      if (child.name === "exitsign" || child.name === "Cube045_1") {
+    this._roomScene.traverse((child) => {
+      if (child.name === OBJECT_NAMES_ENUM.EXIT_SIGN ||
+        child.name === OBJECT_NAMES_ENUM.TV_PANEL) {
         targets.push(child);
       }
     });
     this._raycastingTargets = targets;
 
-    this.scene.add(this.roomScene);
+    this._scene.add(this._roomScene);
   }
 
   _setLights() {
-    this.ambientLight = new THREE.AmbientLight(0xffffff, 1);
-    this.scene.add(this.ambientLight);
+    this._ambientLight = new THREE.AmbientLight(0xffffff, 1);
+    this._scene.add(this._ambientLight);
 
-    this.pointLight = new THREE.PointLight(0xffffff, 3.61, 100, 0);
-    this.pointLight.position.set(0, 35, 0);
-    this.scene.add(this.pointLight);
+    this._pointLight = new THREE.PointLight(0xffffff, 3.61, 100, 0);
+    this._pointLight.position.set(0, 35, 0);
+    this._scene.add(this._pointLight);
 
-    this.app.debug.dat.addColor(this.pointLight, "color")
-        .name("room color");
-    this.app.debug.dat.add(this.pointLight, "intensity")
-        .min(0)
-        .max(10)
-        .name("point light intensity");
-    this.app.debug.dat.addColor(this.ambientLight, "color")
-        .name("ambient color");
+    // TO
+    // this._app.debug.dat.addColor(this._pointLight, "color")
+    //     .name("room color");
+    // this._app.debug.dat.add(this._pointLight, "intensity")
+    //     .min(0)
+    //     .max(10)
+    //     .name("point light intensity");
+    // this._app.debug.dat.addColor(this._ambientLight, "color")
+    //     .name("ambient color");
   }
 
   update() {
@@ -67,8 +68,8 @@ export class RoomWorld extends EventEmitter {
   }
 
   setMenuMesh() {
-    this.roomScene.traverse((child) => {
-      if (child.name === "Cube045_1") {
+    this._roomScene.traverse((child) => {
+      if (child.name === OBJECT_NAMES_ENUM.TV_PANEL) {
         const positionVector = new THREE.Vector3();
         const tvPosition = child.getWorldPosition(positionVector);
         const box = child.geometry.boundingBox;
@@ -89,16 +90,16 @@ export class RoomWorld extends EventEmitter {
   }
 
   destroyWorld() {
-    this.ambientLight.dispose();
-    this.scene.remove(this.ambientLight);
-    this.pointLight.dispose();
-    this.scene.remove(this.pointLight);
-    this.roomScene.traverse((child) => {
+    this._ambientLight.dispose();
+    this.scene.remove(this._ambientLight);
+    this._pointLight.dispose();
+    this.scene.remove(this._pointLight);
+    this._roomScene.traverse((child) => {
       if (child instanceof THREE.Mesh) {
         child.geometry.dispose();
         child.material.dispose();
       }
     });
-    this.scene.remove(this.roomScene);
+    this.scene.remove(this._roomScene);
   }
 }

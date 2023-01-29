@@ -13,12 +13,12 @@ export class GlobeScene {
     }
     GlobeScene.instance = this;
 
-    this.app = new App();
-    this.scene = this.app.scene;
-    this.resources = this.app.resources;
-    this._camera = this.app.camera;
-    this._loadingBar = this.app.loadingBar;
-    this._raycaster = this.app.raycaster;
+    this._app = new App();
+    this._scene = this._app.scene;
+    this._resources = this._app.resources;
+    this._camera = this._app.camera;
+    this._loadingBar = this._app.loadingBar;
+    this._raycaster = this._app.raycaster;
 
     this._loadingBar.on(EVENTS_ENUM.FADING_FINISHED, () => {
       this._raycaster.setRaycasterTargets([this._raycasterTarget]);
@@ -44,12 +44,12 @@ export class GlobeScene {
     const streetPolesMaterial = new THREE.MeshBasicMaterial({ color: COLORS_ENUM.STREET_POLES });
 
     // Baked city texture
-    const bakedCityTexture = this.resources.items[TEXTURES_NAMES_ENUM.GLOBE_CITY_BAKED];
+    const bakedCityTexture = this._resources.items[TEXTURES_NAMES_ENUM.GLOBE_CITY_BAKED];
     bakedCityTexture.flipY = false;
-    bakedCityTexture.anisotropy = Math.min(this.app.renderer.instance.capabilities.anisotropy, 4);
+    bakedCityTexture.anisotropy = Math.min(this._app.renderer.instance.capabilities.anisotropy, 4);
 
     // Baked roads texture
-    const bakedRoadsTexture = this.resources.items[TEXTURES_NAMES_ENUM.GLOBE_ROADS_BAKED];
+    const bakedRoadsTexture = this._resources.items[TEXTURES_NAMES_ENUM.GLOBE_ROADS_BAKED];
     bakedRoadsTexture.flipY = false;
 
     const bakedCityMaterial = new THREE.MeshBasicMaterial({
@@ -60,23 +60,25 @@ export class GlobeScene {
       map: bakedRoadsTexture,
     });
 
-    this.globeCity = this.resources.items[RESOURCES_NAMES_ENUM.GLOBE_CITY].scene;
-    this.globeRoads = this.resources.items[RESOURCES_NAMES_ENUM.GLOBE_ROADS].scene;
+    this._globeCity = this._resources.items[RESOURCES_NAMES_ENUM.GLOBE_CITY].scene;
+    this._globeRoads = this._resources.items[RESOURCES_NAMES_ENUM.GLOBE_ROADS].scene;
     // Set baked city texture
-    this.globeCity.traverse((child) => {
+    this._globeCity.traverse((child) => {
       if (/(white)/.test(child.name)) {
         child.material = windowLightMaterial;
         child.renderOrder = 1;
       } else if (/(grey)/.test(child.name)) {
         child.material = windowDarkMaterial;
         child.renderOrder = 1;
-      } else if (child instanceof THREE.Mesh) {
+      } else if (child instanceof THREE.Mesh && child.name === OBJECT_NAMES_ENUM.MERGED_CITY) {
         child.material = bakedCityMaterial;
         this._raycasterTarget = child;
+      } else {
+        child.material = bakedCityMaterial;
       }
     });
     // Set baked roads texture
-    this.globeRoads.traverse((child) => {
+    this._globeRoads.traverse((child) => {
       if (child.name.includes("parts")) {
         child.material = lightsMaterial;
         child.renderOrder = 1;
@@ -93,11 +95,11 @@ export class GlobeScene {
       }
     });
     // Globe group
-    this.globeGroup = new THREE.Group();
-    this.globeGroup.add(this.globeCity, this.globeRoads);
-    this.globeGroup.scale.set(25, 25, 25);
-    this.globeGroup.position.set(0, -25, 0);
-    this.scene.add(this.globeGroup);
+    this._globeGroup = new THREE.Group();
+    this._globeGroup.add(this._globeCity, this._globeRoads);
+    this._globeGroup.scale.set(25, 25, 25);
+    this._globeGroup.position.set(0, -25, 0);
+    this._scene.add(this._globeGroup);
   }
 
   init() {
@@ -105,12 +107,12 @@ export class GlobeScene {
   }
 
   destroy() {
-    this.scene.traverse((child) => {
+    this._scene.traverse((child) => {
       if (child instanceof THREE.Mesh) {
         child.geometry.dispose();
         child.material.dispose();
       }
     });
-    this.scene.remove(this.globeGroup);
+    this._scene.remove(this._globeGroup);
   }
 }

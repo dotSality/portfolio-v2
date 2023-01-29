@@ -10,19 +10,19 @@ export class Globe {
     }
     Globe.instance = this;
 
-    this.app = new App();
-    this.debug = this.app.debug;
-    this.scene = this.app.scene;
+    this._app = new App();
+    this._debug = this._app.debug;
+    this._scene = this._app.scene;
 
     this.radius = 25;
   }
 
   setGeometry() {
-    this.geometry = new THREE.IcosahedronGeometry(this.radius, 32, 32);
+    this._geometry = new THREE.IcosahedronGeometry(this.radius, 32, 32);
   }
 
   setMaterial() {
-    this.material = new THREE.MeshPhysicalMaterial({
+    this._material = new THREE.MeshPhysicalMaterial({
       color: COLORS_ENUM.WHITE,
       roughness: 0,
       metalness: 0,
@@ -35,17 +35,21 @@ export class Globe {
   }
 
   setMesh() {
-    this.mesh = new THREE.Mesh(this.geometry, this.material);
-    this.scene.add(this.mesh);
+    this._mesh = new THREE.Mesh(this._geometry, this._material);
+    this._scene.add(this._mesh);
   }
 
   setDebugTools() {
-    this.debug.dat.add(this.mesh.material, "roughness").min(0).max(1).step(0.01);
-    this.debug.dat.add(this.mesh.material, "metalness").min(0).max(1).step(0.01);
-    this.debug.dat.add(this.mesh.material, "transmission").min(0).max(1).step(0.01);
-    this.debug.dat.add(this.mesh.material, "reflectivity").min(0).max(1).step(0.01);
-    this.debug.dat.add(this.mesh.material, "clearcoat").min(0).max(1).step(0.01);
-    this.debug.dat.add(this.mesh.material, "clearcoatRoughness").min(0).max(1).step(0.01);
+    this._debug.dat.add(this._mesh.material, "roughness").min(0).max(1).step(0.01);
+    this._debug.dat.add(this._mesh.material, "metalness").min(0).max(1).step(0.01);
+    this._debug.dat.add(this._mesh.material, "transmission").min(0).max(1).step(0.01);
+    this._debug.dat.add(this._mesh.material, "reflectivity").min(0).max(1).step(0.01);
+    this._debug.dat.add(this._mesh.material, "clearcoat").min(0).max(1).step(0.01);
+    this._debug.dat.add(this._mesh.material, "clearcoatRoughness").min(0).max(1).step(0.01);
+  }
+
+  getMesh() {
+    return this._mesh;
   }
 
   init() {
@@ -56,8 +60,8 @@ export class Globe {
   }
 
   destroy() {
-    this.geometry.dispose();
-    this.material.dispose();
-    this.scene.remove(this.mesh);
+    this._geometry.dispose();
+    this._material.dispose();
+    this._scene.remove(this._mesh);
   }
 }
