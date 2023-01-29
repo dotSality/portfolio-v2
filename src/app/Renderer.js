@@ -45,6 +45,7 @@ export class Renderer extends EventEmitter {
   _setInstance() {
     this.instance = new THREE.WebGLRenderer({
       canvas: this._canvas,
+      logarithmicDepthBuffer: true,
     });
     this.instance.physicallyCorrectLights = true;
     this.instance.setClearColor(COLORS_ENUM.BLACK);
