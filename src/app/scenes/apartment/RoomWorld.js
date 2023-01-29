@@ -77,7 +77,6 @@ export class RoomWorld extends EventEmitter {
           box.max.x - box.min.x,
           box.max.y - box.min.y
         );
-        console.log(sizes.x / sizes.y);
         this._menu = new TvMenu(sizes.x, sizes.y, tvPosition);
         this._menu.init();
       }

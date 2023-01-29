@@ -16,6 +16,7 @@ export class LoadingMessage extends EventEmitter {
       const clickableElement = document.querySelector(".hello-message_clickable");
       clickableElement.addEventListener("click", () => {
         this._messageElement.classList.add("fade-out");
+        this._messageElement.style.pointerEvents = "none";
         this.trigger(EVENTS_ENUM.READY_CLICK);
       });
     });

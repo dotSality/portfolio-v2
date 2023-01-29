@@ -10,6 +10,7 @@ import { FXAAShader } from "three/examples/jsm/shaders/FXAAShader";
 import { OutlinePass } from "three/examples/jsm/postprocessing/OutlinePass";
 import { CSS2DRenderer } from "three/examples/jsm/renderers/CSS2DRenderer";
 import { RaycasterClickHandler } from "./RaycasterClickHandler";
+import { COLORS_ENUM } from "../constants/colors";
 
 export class Renderer extends EventEmitter {
   constructor() {
@@ -46,7 +47,7 @@ export class Renderer extends EventEmitter {
       canvas: this._canvas,
     });
     this.instance.physicallyCorrectLights = true;
-    this.instance.setClearColor("#211d20");
+    this.instance.setClearColor(COLORS_ENUM.BLACK);
     this.instance.setSize(this._sizes.width, this._sizes.height);
     this.instance.setPixelRatio(this._sizes.pixelRatio);
     this.instance.toneMapping = THREE.CineonToneMapping;
@@ -73,8 +74,8 @@ export class Renderer extends EventEmitter {
     this._outlinePass.edgeStrength = 10;
     this._outlinePass.edgeGlow = 0.5;
     this._outlinePass.edgeThickness = 2;
-    this._outlinePass.visibleEdgeColor = new THREE.Color(0xffffff);
-    this._outlinePass.hiddenEdgeColor = new THREE.Color(0x190a05);
+    this._outlinePass.visibleEdgeColor = new THREE.Color(COLORS_ENUM.WHITE);
+    this._outlinePass.hiddenEdgeColor = new THREE.Color(COLORS_ENUM.OUTLINE_HIDDEN_EDGE);
     this._effectComposer.addPass(this._outlinePass);
 
     const gammaCorrectionShader = new ShaderPass(GammaCorrectionShader);

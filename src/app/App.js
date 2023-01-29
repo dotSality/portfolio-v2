@@ -45,12 +45,9 @@ export class App extends EventEmitter {
       this.resize();
     });
 
-    this.resources.on(EVENTS_ENUM.READY, () => {
-      console.log("All resources have been loaded");
-    });
-
     this.loadingMessage.on(EVENTS_ENUM.READY_CLICK, () => {
       this.trigger(EVENTS_ENUM.APP_START);
+      this.camera.setDefaultControlsRotation();
     });
   }
 

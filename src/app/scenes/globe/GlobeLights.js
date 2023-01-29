@@ -12,10 +12,10 @@ export class GlobeLights {
 
   _setLight() {
     this._light = new THREE.SpotLight(COLORS_ENUM.WHITE, 30, 60, 120, 1, 0.9);
+    this._light.visible = false;
     this._light.position.set(15, 40, -10);
     this._scene.add(this._light);
     this._scene.add(this._light.target);
-    this._light.visible = false;
   }
 
   init() {

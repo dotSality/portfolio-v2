@@ -48,6 +48,20 @@ export class Camera extends EventEmitter {
     this.controls.zoomSpeed = 0.3;
     this.controls.rotateSpeed = 0.5;
     this.controls.enablePan = false;
+    this.controls.enableZoom = false;
+    this.controls.enableRotate = false;
+  }
+
+  setDefaultControlsRotation() {
+    this.controls.saveState();
+    this.controls.enableZoom = true;
+    this.controls.enableRotate = true;
+  }
+
+  _resetCameraAngle() {
+    const distance = this.instance.position.distanceTo(new THREE.Vector3(0, 0, 0)) / 150;
+    this.controls.reset();
+    this.instance.position.multiplyScalar(distance);
   }
 
   resize() {
@@ -90,6 +104,7 @@ export class Camera extends EventEmitter {
 
   async runBlurOutAnimation() {
     await new Promise((res) => {
+      this._resetCameraAngle();
       this._isBlurringOut = true;
       this._canvas.classList.remove("blurred");
       this._canvas.classList.add("blur-out");
