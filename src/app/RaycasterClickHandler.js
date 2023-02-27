@@ -11,6 +11,7 @@ export class RaycasterClickHandler {
     this._camera = this._app.camera;
     this._canvas = this._app.canvas;
     this._roomWorld = this._app.roomWorld;
+    this._starSky = this._app.starSky;
     this._cursor = this._app.cursor;
     this._outlineObjects = [];
     this._outlinePass = _outlinePass;
@@ -60,6 +61,8 @@ export class RaycasterClickHandler {
         this._camera.trigger(EVENTS_ENUM.FADE_TO_ROOM);
       } else if (outlinedObject.name === OBJECT_NAMES_ENUM.GO_BACK_BUTTON) {
         this._roomWorld._menu.trigger(EVENTS_ENUM.CHANGE_PAGE, [TEXT_LABEL_ENUM.MENU_PAGE]);
+      } else if (outlinedObject.name === OBJECT_NAMES_ENUM.TELESCOPE_TUBE) {
+        this._starSky.trigger(EVENTS_ENUM.STAR_SKY_INIT);
       } else {
         if (this._roomWorld._menu) {
           this._roomWorld._menu.trigger(EVENTS_ENUM.CHANGE_PAGE, [outlinedObject.name]);

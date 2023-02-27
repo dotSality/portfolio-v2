@@ -15,6 +15,11 @@ export const sources = [
     name: "menuContactPageTexture",
   },
   {
+    type: "texture",
+    path: "/textures/room/starSky.jpg",
+    name: "starSkyTexture",
+  },
+  {
     type: "gltfModel",
     path: "/models/globeRoads.glb",
     name: "globeRoadsModel",

@@ -5,4 +5,5 @@ export const TEXTURES_NAMES_ENUM = {
   ENV_TEXTURE: "environmentTexture",
   MENU_INTRO_PAGE_TEXTURE: "menuIntroPageTexture",
   MENU_CONTACT_PAGE_TEXTURE: "menuContactPageTexture",
+  STAR_SKY_TEXTURE: "starSkyTexture",
 };

@@ -6,4 +6,5 @@ export const OBJECT_NAMES_ENUM = {
   GO_BACK_BUTTON:"backButtonMesh",
   STREET_LIGHTS: "streetlights",
   STREET_LAMP: "streetlamp",
+  TELESCOPE_TUBE: "Cylinder016_2",
 }

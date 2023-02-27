@@ -73,7 +73,7 @@ export class Camera extends EventEmitter {
     if (this.controls) {
       const oldPosition = this.instance.position.clone();
       if (this._isBlurringIn) {
-        const newPosition = oldPosition.multiplyScalar(0.994);
+        const newPosition = oldPosition.multiplyScalar(0.996);
         this.instance.position.copy(newPosition);
       }
       if (this._isBlurringOut) {
@@ -98,7 +98,7 @@ export class Camera extends EventEmitter {
         this.controls.enableRotate = true;
         this.controls.enableZoom = true;
         res();
-      }, 1950);
+      }, 950);
     });
   }
 
@@ -116,7 +116,7 @@ export class Camera extends EventEmitter {
         this.controls.enableRotate = true;
         this.controls.enableZoom = true;
         res();
-      }, 1950);
+      }, 950);
     });
   }
 

@@ -19,4 +19,6 @@ export const EVENTS_ENUM = {
   CHANGE_PAGE: "change-page",
   GO_BACK_CLICK: "go-back-click",
   SNAKE_GAME_INIT: "snake-game-init",
+  STAR_SKY_INIT: "star-sky-init",
+  STAR_SKY_DESTROY: "star-sky-destroy",
 };

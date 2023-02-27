@@ -48,7 +48,8 @@ export class RoomWorld extends EventEmitter {
 
     this._roomScene.traverse((child) => {
       if (child.name === OBJECT_NAMES_ENUM.EXIT_SIGN ||
-        child.name === OBJECT_NAMES_ENUM.TV_PANEL) {
+        child.name === OBJECT_NAMES_ENUM.TV_PANEL ||
+        child.name === OBJECT_NAMES_ENUM.TELESCOPE_TUBE) {
         if (child.name === OBJECT_NAMES_ENUM.TV_PANEL) {
           child.material = this._noiseShaderMaterial;
         }

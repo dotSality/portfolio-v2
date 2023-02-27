@@ -1,17 +1,24 @@
 import * as THREE from "three";
 import { EventEmitter } from "./EventEmitter";
 import { EVENTS_ENUM } from "../../constants/events";
+import { App } from "../App";
 
 export class Cursor extends EventEmitter {
   constructor() {
     super();
+    this._app = new App();
+    this._sizes = this._app.sizes;
     this.mouse = new THREE.Vector2();
+    this.proportionMouse = new THREE.Vector2();
 
     this._onMouseDownCoord = null;
 
     window.addEventListener("mousemove", (e) => {
       this.mouse.x = e.clientX;
       this.mouse.y = e.clientY;
+
+      this.proportionMouse.x = e.clientX / this._sizes.width;
+      this.proportionMouse.y = 1 - e.clientY / this._sizes.height;
     });
 
     window.addEventListener("contextmenu", (e) => {

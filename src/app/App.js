@@ -13,6 +13,7 @@ import { Cursor } from "./utils/Cursor";
 import { LoadingBar } from "./LoadingBar";
 import { LoadingMessage } from "./LoadingMessage";
 import { EventEmitter } from "./utils/EventEmitter";
+import { StarSky } from "./scenes/apartment/StarSky";
 
 export class App extends EventEmitter {
   constructor(canvas) {
@@ -35,6 +36,7 @@ export class App extends EventEmitter {
     this.loadingMessage = new LoadingMessage();
     this.globeWorld = new GlobeWorld();
     this.roomWorld = new RoomWorld();
+    this.starSky = new StarSky();
     this.renderer = new Renderer();
 
     this.time.on(EVENTS_ENUM.TICK, () => {
@@ -48,6 +50,14 @@ export class App extends EventEmitter {
     this.loadingMessage.on(EVENTS_ENUM.READY_CLICK, () => {
       this.trigger(EVENTS_ENUM.APP_START);
       this.camera.setDefaultControlsRotation();
+    });
+
+    this.starSky.on(EVENTS_ENUM.STAR_SKY_DESTROY, () => {
+      this.destroyTelescope();
+    });
+
+    this.starSky.on(EVENTS_ENUM.STAR_SKY_INIT, () => {
+      this.initTelescope();
     });
   }
 
@@ -67,6 +77,22 @@ export class App extends EventEmitter {
     this.globeWorld.initWorld();
     await this.camera.runBlurOutAnimation();
     this.camera.trigger(EVENTS_ENUM.FADE_TO_CITY);
+  }
+
+  async initTelescope() {
+    this.raycaster.setRaycasterTargets(null);
+    await this.camera.runBlurInAnimation();
+    this.roomWorld.destroyWorld();
+    this.starSky.init();
+    await this.camera.runBlurOutAnimation();
+  }
+
+  async destroyTelescope() {
+    await this.camera.runBlurInAnimation();
+    this.starSky.destroy();
+    this.roomWorld.initWorld();
+    await this.camera.runBlurOutAnimation();
+    this.camera.trigger(EVENTS_ENUM.FADE_TO_ROOM);
   }
 
   resize() {

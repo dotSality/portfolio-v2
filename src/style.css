@@ -25,7 +25,7 @@ body {
 .webgl.blur-in {
     opacity: unset;
     filter: blur(0px);
-    animation: 2s scene-blur-in linear;
+    animation: 1s scene-blur-in linear;
 }
 
 .webgl.blurred {
@@ -36,11 +36,15 @@ body {
 .webgl.blur-out {
     opacity: 1;
     filter: blur(32px);
-    animation: 2s scene-blur-out linear;
+    animation: 1s scene-blur-out linear;
 }
 
 .webgl.pointer {
     cursor: pointer;
+}
+
+.no-cursor {
+    cursor: none;
 }
 
 @keyframes scene-blur-in {
