@@ -110,6 +110,52 @@ body {
     font-size: 32px;
 }
 
+.enter-message {
+    display: flex;
+    position: fixed;
+    left: 50%;
+    top: calc(20%);
+    opacity: 0;
+    transform: translate(-50%, -30px);
+    width: fit-content;
+    font-size: 48px;
+    color: #ffffff;
+    z-index: 999999;
+    flex-direction: column;
+    background-color: #000000;
+    transition: transform 0.3s ease-in, opacity 0.3s ease-in;
+}
+
+.enter-message.appear {
+    transform: translate(-50%, 0);
+    opacity: 1;
+}
+
+.enter-message_progress-bar {
+    height: 2px;
+    background-color: transparent;
+    position: relative;
+}
+
+.enter-message_progress-bar:before {
+    height: 100%;
+    position: absolute;
+    content: '';
+    width: 100%;
+    background-color: deepskyblue;
+    animation: 3s enter-message linear;
+}
+
+@keyframes enter-message {
+    from {
+        width: 100%;
+    }
+
+    to {
+        width: 0;
+    }
+}
+
 @media screen and (max-width: 1400px), screen and (max-height: 768px) {
     .menu-item {
         font-size: 24px;
