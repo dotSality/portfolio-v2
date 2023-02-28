@@ -30,13 +30,13 @@ module.exports = {
       rules:
         [
           // HTML
-          {
-            test: /\.(html)$/,
-            use:
-              [
-                "html-loader"
-              ]
-          },
+          // {
+          //   test: /\.(html)$/,
+          //   use:
+          //     [
+          //       "html-loader"
+          //     ]
+          // },
 
           // JS
           {
