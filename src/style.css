@@ -173,3 +173,14 @@ body {
         font-size: 14px;
     }
 }
+
+.mobile-placeholder {
+    height: 100vh;
+    padding: 10px 20px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    color: #ffffff;
+    font-size: 24px;
+    text-align: center;
+}
