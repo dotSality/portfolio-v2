@@ -21,7 +21,10 @@ export class Snow extends EventEmitter {
     this._globeScene = new GlobeScene();
 
     this._disposed = false;
-    this._snowflakesCount = 250;
+
+    this._isMobile = this._app.isMobile;
+    this._snowflakesCount = this._isMobile ? 150 : 250;
+    this._velocityValue = this._isMobile ? 0.05 : 0.2;
   }
 
   init() {
@@ -30,9 +33,9 @@ export class Snow extends EventEmitter {
   }
 
   _getVelocities() {
-    const velocityX = getSign() * (Math.random() * 0.2 + 0.2);
-    const velocityY = (Math.random() * 0.2 + 0.2);
-    const velocityZ = getSign() * (Math.random() * 0.2 + 0.2);
+    const velocityX = getSign() * (Math.random() * this._velocityValue + this._velocityValue);
+    const velocityY = (Math.random() * this._velocityValue + this._velocityValue);
+    const velocityZ = getSign() * (Math.random() * this._velocityValue + this._velocityValue);
     return [velocityX, velocityY, velocityZ];
   }
 
@@ -75,7 +78,7 @@ export class Snow extends EventEmitter {
 
   _setMaterial() {
     this._material = new THREE.PointsMaterial({
-      size: 2,
+      size: this._isMobile ? 0.8 : 2,
       sizeAttenuation: true,
       depthWrite: false,
       alphaMap: this._resources.items[TEXTURES_NAMES_ENUM.PARTICLE_TEXTURE],

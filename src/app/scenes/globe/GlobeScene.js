@@ -20,9 +20,12 @@ export class GlobeScene {
     this._loadingBar = this._app.loadingBar;
     this._raycaster = this._app.raycaster;
 
+    this._isMobile = this._app.isMobile;
+    this._scaleValue = this._isMobile ? 10 : 25;
+
     this._resources.on(EVENTS_ENUM.READY, () => {
       this._setModel();
-    })
+    });
 
     this._loadingBar.on(EVENTS_ENUM.FADING_FINISHED, () => {
       this._raycaster.setRaycasterTargets([this._raycasterTarget]);
@@ -102,9 +105,8 @@ export class GlobeScene {
     // Globe group
     this._globeGroup = new THREE.Group();
     this._globeGroup.add(this._globeCity, this._globeRoads);
-    this._globeGroup.scale.set(25, 25, 25);
-    this._globeGroup.position.set(0, -25, 0);
-    // this._scene.add(this._globeGroup);
+    this._globeGroup.scale.set(this._scaleValue, this._scaleValue, this._scaleValue);
+    this._globeGroup.position.set(0, -this._scaleValue, 0);
   }
 
   init() {

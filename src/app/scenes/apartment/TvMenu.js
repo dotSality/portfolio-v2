@@ -26,10 +26,12 @@ export class TvMenu extends EventEmitter {
       TEXT_LABEL_ENUM.SECRET_ZONE,
     ];
 
+    this._isMobile = this._app.isMobile;
+    this._substractingValue = this._isMobile ? 2.5 : 1;
     this._width = width;
     this._height = height;
 
-    this._scaleValue = 10;
+    this._scaleValue = 10 / this._substractingValue;
     this._scaledWidth = this._width * this._scaleValue;
     this._scaledHeight = this._height * this._scaleValue;
     this._initPosition = position;
@@ -59,20 +61,26 @@ export class TvMenu extends EventEmitter {
 
   _setTurnOffButton() {
     // BACK BUTTON
-    const buttonWidth = this._scaledWidth * 0.12;
+    const buttonWidth = this._scaledWidth * 0.12 * (this._isMobile ? 2 : 1);
     const buttonHeight = this._scaledHeight * 0.094;
-    const turnOffButtonGeometry = generateShapeGeometry(-buttonWidth / 2, -buttonHeight / 2, buttonWidth, buttonHeight, 0.2);
+    const turnOffButtonGeometry = generateShapeGeometry(-buttonWidth / 2, -buttonHeight / 2, buttonWidth, buttonHeight, 0.2 / this._substractingValue);
     const turnOffButtonMaterial = new THREE.MeshBasicMaterial({ color: COLORS_ENUM.MENU_ITEM_BACKGROUND });
     this._turnOffButtonMesh = new THREE.Mesh(turnOffButtonGeometry, turnOffButtonMaterial);
     this._turnOffButtonMesh.name = "turnOffButtonMesh";
     const turnOffButtonText = document.createElement("div");
     turnOffButtonText.textContent = TEXT_LABEL_ENUM.TURN_OFF;
-    turnOffButtonText.className = "menu-item";
+    turnOffButtonText.className = `menu-item ${this._isMobile ? "menu-item__mobile" : ""}`;
+    if (this._isMobile && this._sizes.isHorizontal) {
+      turnOffButtonText.classList.add("menu-item__horizontal");
+    }
     const object = new CSS2DObject(turnOffButtonText);
     this._turnOffButtonMesh.position.copy(this._initPosition);
-    this._turnOffButtonMesh.position.x += this._scaledWidth / 2 - 1.5;
-    this._turnOffButtonMesh.position.y += -this._scaledHeight / 2 + 1;
-    this._turnOffButtonMesh.position.z += 0.02;
+    this._turnOffButtonMesh.position.x += this._scaledWidth / 2 - 1.5 / this._substractingValue;
+    if (this._isMobile) {
+      this._turnOffButtonMesh.position.x -= 0.8;
+    }
+    this._turnOffButtonMesh.position.y += -this._scaledHeight / 2 + 1 / this._substractingValue;
+    this._turnOffButtonMesh.position.z += 0.02 / this._substractingValue;
     this._turnOffButtonMesh.add(object);
     this._scene.add(this._turnOffButtonMesh);
     this._raycaster.updateRaycasterTargets(this._turnOffButtonMesh);
@@ -87,20 +95,26 @@ export class TvMenu extends EventEmitter {
   }
 
   _setBackButton() {
-    const buttonWidth = this._scaledWidth * 0.12;
+    const buttonWidth = this._scaledWidth * 0.12 * (this._isMobile ? 2 : 1);
     const buttonHeight = this._scaledHeight * 0.094;
-    const backButtonGeometry = generateShapeGeometry(-buttonWidth / 2, -buttonHeight / 2, buttonWidth, buttonHeight, 0.2);
+    const backButtonGeometry = generateShapeGeometry(-buttonWidth / 2, -buttonHeight / 2, buttonWidth, buttonHeight, 0.2 / this._substractingValue);
     const backButtonMaterial = new THREE.MeshBasicMaterial({ color: COLORS_ENUM.MENU_ITEM_BACKGROUND });
     this._backButtonMesh = new THREE.Mesh(backButtonGeometry, backButtonMaterial);
     this._backButtonMesh.name = "backButtonMesh";
     const backButtonText = document.createElement("div");
     backButtonText.textContent = TEXT_LABEL_ENUM.BACK;
-    backButtonText.className = "menu-item";
+    backButtonText.className = `menu-item ${this._isMobile ? "menu-item__mobile" : ""}`;
+    backButtonText.classList.add(this._isMobile && this._sizes.isHorizontal
+      ? "menu-item__horizontal"
+      : "menu-item__vertical");
     const object = new CSS2DObject(backButtonText);
     this._backButtonMesh.position.copy(this._initPosition);
-    this._backButtonMesh.position.x -= this._scaledWidth / 2 - 1.5;
-    this._backButtonMesh.position.y -= this._scaledHeight / 2 - 1;
-    this._backButtonMesh.position.z += 0.02;
+    this._backButtonMesh.position.x -= this._scaledWidth / 2 - 1.5 / this._substractingValue;
+    if (this._isMobile) {
+      this._backButtonMesh.position.x += 0.8;
+    }
+    this._backButtonMesh.position.y -= this._scaledHeight / 2 - 1 / this._substractingValue;
+    this._backButtonMesh.position.z += 0.02 / this._substractingValue;
     this._backButtonMesh.add(object);
     this._scene.add(this._backButtonMesh);
 
@@ -129,19 +143,22 @@ export class TvMenu extends EventEmitter {
     const menuItemHeight = this._scaledHeight * 0.125;
     const menuItemMaterial = new THREE.MeshBasicMaterial({ color: COLORS_ENUM.MENU_ITEM_BACKGROUND });
 
-    const menuItemGeometry = generateShapeGeometry(-menuItemWidth / 2, -menuItemHeight / 2, menuItemWidth, menuItemHeight, 0.5);
+    const menuItemGeometry = generateShapeGeometry(-menuItemWidth / 2, -menuItemHeight / 2, menuItemWidth, menuItemHeight, 0.5 / this._substractingValue);
 
     const menuGroup = new THREE.Group();
     // THINK ABOUT SOME REFACTOR
     this._menuItemsLabels.forEach((label, idx) => {
       const element = document.createElement("div");
-      element.className = "menu-item";
+      element.className = `menu-item ${this._isMobile ? "menu-item__mobile" : ""}`;
+      if (this._isMobile && this._sizes.isHorizontal) {
+        element.classList.add("menu-item__horizontal");
+      }
       element.textContent = label;
       const object = new CSS2DObject(element);
       const menuItemMesh = new THREE.Mesh(menuItemGeometry, menuItemMaterial);
       menuItemMesh.name = label;
       menuItemMesh.position.copy(this._initPosition);
-      menuItemMesh.position.y -= idx * 2 - 2;
+      menuItemMesh.position.y -= idx * 2 / this._substractingValue - 2 / this._substractingValue;
       menuItemMesh.add(object);
       this._raycaster.updateRaycasterTargets(menuItemMesh);
       menuGroup.add(menuItemMesh);
@@ -203,8 +220,9 @@ export class TvMenu extends EventEmitter {
     const welcomePageTexture = this._resources.items[TEXTURES_NAMES_ENUM.MENU_INTRO_PAGE_TEXTURE];
     welcomePageTexture.encoding = THREE.sRGBEncoding;
     const pageMesh = this._getPageMesh(welcomePageTexture);
-    pageMesh.scale.set(0.9, 0.9, 0.9);
-    pageMesh.position.y += 0.7;
+    const pageScale = 0.9;
+    pageMesh.scale.set(pageScale, pageScale, pageScale);
+    pageMesh.position.y += 0.7 / this._substractingValue;
     this._pages[this._menuItemsLabels[0]] = {
       page: pageMesh,
       destroy: () => {
@@ -222,8 +240,9 @@ export class TvMenu extends EventEmitter {
     const contactPageTexture = this._resources.items[TEXTURES_NAMES_ENUM.MENU_CONTACT_PAGE_TEXTURE];
     contactPageTexture.encoding = THREE.sRGBEncoding;
     const pageMesh = this._getPageMesh(contactPageTexture);
-    pageMesh.scale.set(0.9, 0.9, 0.9);
-    pageMesh.position.y += 0.7;
+    const pageScale = 0.9;
+    pageMesh.scale.set(pageScale, pageScale, pageScale);
+    pageMesh.position.y += 0.7 / this._substractingValue;
     this._pages[this._menuItemsLabels[1]] = {
       page: pageMesh,
       destroy: () => {
@@ -240,7 +259,8 @@ export class TvMenu extends EventEmitter {
   _setMesh() {
     this._mesh = new THREE.Mesh(this._geometry, this._material);
     this._mesh.position.copy(this._initPosition);
-    this._mesh.scale.set(10, 10, 10);
+    const meshScale = this._scaleValue;
+    this._mesh.scale.set(meshScale, meshScale, meshScale);
     this._scene.add(this._mesh);
   }
 
@@ -257,6 +277,24 @@ export class TvMenu extends EventEmitter {
     this.on(EVENTS_ENUM.CHANGE_PAGE, (pageName) => {
       this._setCurrentPage(pageName);
     });
+
+    if (this._isMobile) {
+      this._sizes.on(EVENTS_ENUM.HORIZONTAL_ORIENTATION, () => {
+        document.querySelectorAll(".menu-item")
+                .forEach((el) => {
+                  el.classList.add("menu-item__horizontal");
+                  el.classList.remove("menu-item__vertical");
+                });
+      });
+
+      this._sizes.on(EVENTS_ENUM.VERTICAL_ORIENTATION, () => {
+        document.querySelectorAll(".menu-item")
+                .forEach((el) => {
+                  el.classList.remove("menu-item__horizontal");
+                  el.classList.add("menu-item__vertical");
+                });
+      });
+    }
   }
 
   update() {

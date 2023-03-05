@@ -20,6 +20,8 @@ export class SnakeCanvas {
     this._listener = this._keyDown.bind(this);
 
     this._size = size;
+    this._isMobile = this._app.isMobile;
+    this._substractingValue = this._isMobile ? 2.5 : 1;
 
     this._isFinished = true;
     this._isLoading = true;
@@ -39,7 +41,7 @@ export class SnakeCanvas {
       this._ctx.fillStyle = COLORS_STRING_ENUM.WHITE_STRING;
 
       const initX = 20;
-      const initY = this._canvas.clientHeight / 2 - 2;
+      const initY = this._canvas.clientHeight / 2 - 2 / this._substractingValue;
       const barWitdh = (this._canvas.clientWidth - 40) / 100 * this._loadingStatus;
       const barHeight = 4;
       this._ctx.fillRect(

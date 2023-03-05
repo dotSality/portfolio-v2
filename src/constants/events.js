@@ -21,4 +21,6 @@ export const EVENTS_ENUM = {
   SNAKE_GAME_INIT: "snake-game-init",
   STAR_SKY_INIT: "star-sky-init",
   STAR_SKY_DESTROY: "star-sky-destroy",
+  HORIZONTAL_ORIENTATION: 'horizontal-orientation',
+  VERTICAL_ORIENTATION: 'vertical-orientation',
 };

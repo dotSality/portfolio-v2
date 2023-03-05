@@ -2,6 +2,7 @@ import { App } from "./App";
 import * as THREE from "three";
 import { OrbitControls } from "three/examples/jsm/controls/OrbitControls";
 import { EventEmitter } from "./utils/EventEmitter";
+import { EVENTS_ENUM } from "../constants/events";
 
 export class Camera extends EventEmitter {
   constructor() {
@@ -13,6 +14,8 @@ export class Camera extends EventEmitter {
 
     this._previousPosition = null;
 
+    this._isMobile = this._app.isMobile;
+
     this.init();
   }
 
@@ -22,6 +25,32 @@ export class Camera extends EventEmitter {
 
     this._setInstance();
     this._setOrbitControls();
+
+    if (this._isMobile) {
+      this.initMobileEvents();
+    }
+  }
+
+  initMobileEvents() {
+    const oldPosition = this.instance.position.clone();
+
+    this._sizes.on(EVENTS_ENUM.HORIZONTAL_ORIENTATION, () => {
+      if (this.controls.enableRotate) {
+        this.controls.minDistance = 10;
+        this.controls.maxDistance = 60;
+        const newPosition = oldPosition.multiplyScalar(2);
+        this.instance.position.copy(newPosition);
+      }
+    });
+    this._sizes.on(EVENTS_ENUM.VERTICAL_ORIENTATION, () => {
+      if (this.controls.enableRotate) {
+        this.controls.minDistance = 20;
+        this.controls.maxDistance = 100;
+        console.log(this.controls.maxDistance);
+        const newPosition = oldPosition.multiplyScalar(0.8);
+        this.instance.position.copy(newPosition);
+      }
+    });
   }
 
   _setInstance() {
@@ -31,7 +60,11 @@ export class Camera extends EventEmitter {
       0.1,
       200,
     );
-    this.instance.position.set(70, 42.5, 70);
+    const initPositionVec = new THREE.Vector3(70, 42.5, 70);
+    if (this._sizes.isHorizontal && this._isMobile) {
+      initPositionVec.multiplyScalar(0.8);
+    }
+    this.instance.position.copy(initPositionVec);
     this._scene.add(this.instance);
   }
 
@@ -42,8 +75,11 @@ export class Camera extends EventEmitter {
     this.controls.minPolarAngle = Math.PI / 4;
     this.controls.maxPolarAngle = Math.PI / 4 + Math.PI / 6;
 
-    this.controls.minDistance = 60;
-    this.controls.maxDistance = 150;
+    const mobileMinDistance = this._isMobile ? 20 : 60;
+    const mobileMaxDistance = this._isMobile ? 100 : 150;
+
+    this.controls.minDistance = this._sizes.isHorizontal ? 10 : mobileMinDistance;
+    this.controls.maxDistance = this._sizes.isHorizontal ? 60 : mobileMaxDistance;
 
     this.controls.zoomSpeed = 0.3;
     this.controls.rotateSpeed = 0.5;
@@ -129,7 +165,11 @@ export class Camera extends EventEmitter {
     this.controls.minDistance = 0;
     this.controls.dampingFactor = 0;
     this.controls.enableRotate = false;
-    this.controls.enableZoom = false;
+    this.controls.enableZoom = this._isMobile;
+    if (this._isMobile) {
+      this.controls.minDistance = 10;
+      this.controls.maxDistance = 30;
+    }
     this.instance.position.copy(posVec);
     this.controls.target.copy(lookVec);
   }
@@ -141,8 +181,8 @@ export class Camera extends EventEmitter {
     this.controls.enableZoom = true;
     this.controls.dampingFactor = 0.05;
     this.controls.rotateSpeed = 0.5;
-    this.controls.minDistance = 60;
-    this.controls.maxDistance = 150;
+    this.controls.minDistance = this._isMobile ? 20 : 60;
+    this.controls.maxDistance = this._isMobile ? 100 : 150;
     this.instance.position.copy(this._previousPosition);
     this.setPrevCameraCoords(null);
   }

@@ -76,7 +76,7 @@ body {
 }
 
 .hello-message {
-    position: absolute;
+    position: fixed;
     text-align: center;
     top: 45%;
     left: 50%;
@@ -171,5 +171,17 @@ body {
 @media screen and (max-width: 768px), screen and (max-height: 512px) {
     .menu-item {
         font-size: 14px;
+    }
+
+    .menu-item__mobile {
+        font-size: 3vw;
+    }
+
+    .menu-item__vertical {
+        font-size: 6vw;
+    }
+
+    .menu-item__horizontal {
+        font-size: 1vw;
     }
 }

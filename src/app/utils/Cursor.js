@@ -7,6 +7,7 @@ export class Cursor extends EventEmitter {
   constructor() {
     super();
     this._app = new App();
+    this._isMobile = this._app.isMobile;
     this._sizes = this._app.sizes;
     this.mouse = new THREE.Vector2();
     this.proportionMouse = new THREE.Vector2();

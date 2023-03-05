@@ -16,13 +16,13 @@ import { EventEmitter } from "./utils/EventEmitter";
 import { StarSky } from "./scenes/apartment/StarSky";
 
 export class App extends EventEmitter {
-  constructor(canvas) {
+  constructor(canvas, isMobile) {
     super();
     if (App.instance) {
       return App.instance;
     }
     App.instance = this;
-
+    this.isMobile = isMobile;
     this.canvas = canvas;
     this.resources = new Resources();
     this.debug = new Debug();

@@ -7,6 +7,7 @@ import { TEXT_LABEL_ENUM } from "../constants/textLabels";
 export class RaycasterClickHandler {
   constructor(_outlinePass) {
     this._app = new App();
+    this._sizes = this._app.sizes;
     this._raycaster = this._app.raycaster;
     this._camera = this._app.camera;
     this._canvas = this._app.canvas;
@@ -15,6 +16,8 @@ export class RaycasterClickHandler {
     this._cursor = this._app.cursor;
     this._outlineObjects = [];
     this._outlinePass = _outlinePass;
+
+    this._isMobile = this._app.isMobile;
 
     this._cursor.on(EVENTS_ENUM.CLICK, () => {
       this._onCityClickHandler();
@@ -46,7 +49,8 @@ export class RaycasterClickHandler {
         const lookVec = new THREE.Vector3();
         lookVec.setFromMatrixPosition(outlinedObject.matrixWorld);
         const posVec = lookVec.clone();
-        posVec.z += 20;
+        const mobileDelta = this._isMobile ? 35 : 20;
+        posVec.z += this._sizes.isHorizontal ? 15 : mobileDelta;
 
         this._camera.controls.rotateSpeed = 0;
 
@@ -59,6 +63,7 @@ export class RaycasterClickHandler {
         this._roomWorld._menu.destroy();
         this._camera.resetControls();
         this._camera.trigger(EVENTS_ENUM.FADE_TO_ROOM);
+        this._camera.initMobileEvents();
       } else if (outlinedObject.name === OBJECT_NAMES_ENUM.GO_BACK_BUTTON) {
         this._roomWorld._menu.trigger(EVENTS_ENUM.CHANGE_PAGE, [TEXT_LABEL_ENUM.MENU_PAGE]);
       } else if (outlinedObject.name === OBJECT_NAMES_ENUM.TELESCOPE_TUBE) {

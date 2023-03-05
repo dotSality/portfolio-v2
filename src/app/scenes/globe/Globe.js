@@ -14,7 +14,8 @@ export class Globe {
     this._debug = this._app.debug;
     this._scene = this._app.scene;
 
-    this.radius = 25;
+    this._isMobile = this._app.isMobile;
+    this.radius = this._isMobile ? 10 : 25;
   }
 
   setGeometry() {

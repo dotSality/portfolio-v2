@@ -13,12 +13,16 @@ export class RoomWorld extends EventEmitter {
     super();
 
     this._app = new App();
+    this._isMobile = this._app.isMobile;
     this._resources = this._app.resources;
     this._scene = this._app.scene;
     this._camera = this._app.camera;
     this._time = this._app.time;
 
     this._raycaster = this._app.raycaster;
+
+    this._isMobile = this._app.isMobile;
+    this._scaleValue = this._isMobile ? 4 : 10;
 
     this._camera.on(EVENTS_ENUM.FADE_TO_ROOM, () => {
       this._raycaster.setRaycasterTargets(this._raycastingTargets);
@@ -41,15 +45,15 @@ export class RoomWorld extends EventEmitter {
   _setScene() {
     this._roomScene = this._resources.items[RESOURCES_NAMES_ENUM.ROOM_SCENE].scene;
 
-    this._roomScene.scale.set(10, 10, 10);
-    this._roomScene.position.set(0, -20, 0);
+    this._roomScene.scale.set(this._scaleValue, this._scaleValue, this._scaleValue);
+    this._roomScene.position.set(0, -this._scaleValue * 2, 0);
 
     const targets = [];
 
     this._roomScene.traverse((child) => {
       if (child.name === OBJECT_NAMES_ENUM.EXIT_SIGN ||
         child.name === OBJECT_NAMES_ENUM.TV_PANEL ||
-        child.name === OBJECT_NAMES_ENUM.TELESCOPE_TUBE) {
+        (!this._isMobile && child.name === OBJECT_NAMES_ENUM.TELESCOPE_TUBE)) {
         if (child.name === OBJECT_NAMES_ENUM.TV_PANEL) {
           child.material = this._noiseShaderMaterial;
         }
